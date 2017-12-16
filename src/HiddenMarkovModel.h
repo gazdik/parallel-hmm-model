@@ -10,6 +10,10 @@
 
 #include <map>
 #include <string>
+#include "Array.h"
+
+namespace hmm
+{
 
 /**
  * Hidden Markov Model specified as tripple M = (A,B,pi),
@@ -19,22 +23,17 @@
 class HiddenMarkovModel
 {
 public:
-    HiddenMarkovModel(const std::string & fileTransitions,
-                      const std::string & fileEmissions);
+    HiddenMarkovModel(const std::string &fileTransitions,
+                      const std::string &fileEmissions);
 
     HiddenMarkovModel(unsigned numStates, unsigned numSymbols);
 
-    HiddenMarkovModel(float *A, float *B, float *pi);
+    HiddenMarkovModel(const Array2D<float> &A, const Array2D<float> &B,
+                      const Array1D<float> &pi);
 
-    unsigned int getNumStates() const;
+    size_t getNumStates() const;
 
-    unsigned int getNumSymbols() const;
-
-    float *getLogA() const;
-
-    float *getLogB() const;
-
-    float *getLogPi() const;
+    size_t getNumSymbols() const;
 
 private:
     /**
@@ -49,27 +48,49 @@ private:
      * Transition probability matrix A, each element (i,j) represents the
      * probability of moving from state i to state j.
      */
-    float * mLogA;
+    Array2D<float> mLogA;
     /**
      * Emission probability matrix B, each element (i,j) represents
      * the probability of observation symbol j being generated from state i.
      */
-    float * mLogB;
+    Array2D<float> mLogB;
     /**
      * Vector of initial state probabilities.
      * Each element i represents the probability that the Markov chain will
      * start in state i.
      */
-    float * mLogPi;
+    Array1D<float> mLogPi;
     /**
      * Mapping between indices and original vocabulary symbols.
      */
-    std::map<unsigned, std::string> mVocabularyMapping;
+    std::map<std::size_t, std::string> mVocabularyMapping;
     /**
      * Mapping between indices and state names.
      */
-    std::map<unsigned, std::string> mStatesMapping;
+    std::map<std::size_t, std::string> mStatesMapping;
+
+private:
+
+    /**
+     * Load transition probabilities and emission probabilities
+     * specified in the given file.
+     *
+     * Each row of the file 'fileTransitions' is of the form
+     * 'fromstate tostate P(tostate|fromstate)'
+     * and '#' is a special state that denotes the start state.
+     *
+     * Each row of the file 'fileEmissions' is of the form
+     * 'state output P(output|state)'
+     */
+    void loadFromFile(const std::string &fileTransitions,
+                      const std::string &fileEmissions);
+
+    void saveToFile(const std::string &fileTransitions,
+                    const std::string &fileEmissions);
+
 };
+
+}
 
 
 #endif //GMU_HIDDENMARKOVMODEL_H

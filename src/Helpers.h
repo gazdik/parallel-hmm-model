@@ -8,20 +8,16 @@
 #ifndef GMU_HELPERS_H
 #define GMU_HELPERS_H
 
-inline unsigned index1D(unsigned x, unsigned y, unsigned width)
+#include <cstddef>
+
+namespace hmm
 {
-    return x + (y * width);
+
+inline std::size_t index1D(std::size_t x, std::size_t y, std::size_t width)
+{
+    return y + (x * width);
 }
 
-inline unsigned xCoord2D(unsigned index, unsigned width)
-{
-    return index % width;
 }
-
-inline unsigned yCoord2D(unsigned index, unsigned width)
-{
-    return index / width;
-}
-
 
 #endif //GMU_HELPERS_H
