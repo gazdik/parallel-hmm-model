@@ -44,7 +44,7 @@ ForwardAlgorithmGPU::ForwardAlgorithmGPU(hmm::HiddenMarkovModel &hmm)
         : ForwardAlgorithm(hmm)
 {}
 
-float ForwardAlgorithmGPU::evaluate(Array2D<unsigned> &observation)
+float ForwardAlgorithmGPU::evaluate(Array1D<unsigned> &observation)
 {
     return ForwardAlgorithm::evaluate(observation);
 }

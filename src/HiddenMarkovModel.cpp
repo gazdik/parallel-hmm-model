@@ -38,8 +38,6 @@ void HiddenMarkovModel::loadFromFile(
 {
     ifstream its(fileTransitions);
 
-    map<string, size_t> mapStateIndex;
-    map<string, size_t> mapOutputIndex;
     float probability;
 
     size_t iState = 0;
@@ -50,32 +48,31 @@ void HiddenMarkovModel::loadFromFile(
     while (its.good())
     {
         its >> fromState;
-        if (mapStateIndex.count(fromState) == 0) {
-            mStatesMapping[iState] = fromState;
-            mapStateIndex[fromState] = iState++;
+        if (mStateToIndexMap.count(fromState) == 0) {
+            mIndexToStateMap[iState] = fromState;
+            mStateToIndexMap[fromState] = iState++;
         }
         its >> toState;
-        if (mapStateIndex.count(toState) == 0) {
-            mStatesMapping[iState] = toState;
-            mapStateIndex[toState] = iState++;
+        if (mStateToIndexMap.count(toState) == 0) {
+            mIndexToStateMap[iState] = toState;
+            mStateToIndexMap[toState] = iState++;
         }
         its >> probability;
         probability = log(probability);
 
         if (fromState == "#") {
             // Set an initial state probability
-            mLogPi.at(mapStateIndex[toState]) = probability;
+            mLogPi.at(mStateToIndexMap[toState]) = probability;
         }
         else {
             // Set an transition probability between states
-            mLogA.at(mapStateIndex[fromState], mapStateIndex[toState]) = probability;
+            mLogA.at(mStateToIndexMap[fromState], mStateToIndexMap[toState]) = probability;
         }
 
-
         // TODO delete
-        std::cout << "From : " << mapStateIndex[fromState]
-                  << ", To: " << mapStateIndex[toState]
-                  << ", Probability: " << mLogA.at(mapStateIndex[fromState], mapStateIndex[toState]) << std::endl;
+        std::cout << "From : " << mStateToIndexMap[fromState]
+                  << ", To: " << mStateToIndexMap[toState]
+                  << ", Probability: " << mLogA.at(mStateToIndexMap[fromState], mStateToIndexMap[toState]) << std::endl;
     }
 
     ifstream ies(fileEmissions);
@@ -87,25 +84,25 @@ void HiddenMarkovModel::loadFromFile(
     while (ies.good())
     {
         ies >> state;
-        if (mapStateIndex.count(state) == 0) {
-            mStatesMapping[iState] = state;
-            mapStateIndex[state] = iState++;
+        if (mStateToIndexMap.count(state) == 0) {
+            mIndexToStateMap[iState] = state;
+            mStateToIndexMap[state] = iState++;
         }
         ies >> output;
-        if (mapOutputIndex.count(output) == 0) {
-            mVocabularyMapping[iOutput] = output;
-            mapOutputIndex[output] = iOutput++;
+        if (mOutputToIndexMap.count(output) == 0) {
+            mIndexToOutputMap[iOutput] = output;
+            mOutputToIndexMap[output] = iOutput++;
         }
         ies >> probability;
         probability = log(probability);
 
-        mLogB.at(mapStateIndex[state], mapOutputIndex[output]) = probability;
+        mLogB.at(mStateToIndexMap[state], mOutputToIndexMap[output]) = probability;
 
         // TODO delete
-        std::cout << "State : " << mapStateIndex[state]
-                  << ", Output: " << mapOutputIndex[output]
+        std::cout << "State : " << mStateToIndexMap[state]
+                  << ", Output: " << mOutputToIndexMap[output]
                   << ", Probability: "
-                  << mLogB.at(mapStateIndex[state], mapOutputIndex[output])
+                  << mLogB.at(mStateToIndexMap[state], mOutputToIndexMap[output])
                   << std::endl;
     }
 

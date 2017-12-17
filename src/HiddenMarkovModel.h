@@ -35,7 +35,6 @@ public:
 
     size_t getNumSymbols() const;
 
-private:
     /**
      * Total number of states.
      */
@@ -63,11 +62,19 @@ private:
     /**
      * Mapping between indices and original vocabulary symbols.
      */
-    std::map<std::size_t, std::string> mVocabularyMapping;
+    std::map<std::size_t, std::string> mIndexToOutputMap;
+    /**
+     * Mapping between original vocabulary symbols to indices.
+     */
+    std::map<std::string, std::size_t> mOutputToIndexMap;
     /**
      * Mapping between indices and state names.
      */
-    std::map<std::size_t, std::string> mStatesMapping;
+    std::map<std::size_t, std::string> mIndexToStateMap;
+    /**
+     * Mapping between state names and indices.
+     */
+    std::map<std::string, std::size_t> mStateToIndexMap;
 
 private:
 
