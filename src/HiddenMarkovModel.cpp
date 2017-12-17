@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <set>
+#include <cmath>
 #include "HiddenMarkovModel.h"
 
 using namespace std;
@@ -59,8 +60,17 @@ void HiddenMarkovModel::loadFromFile(
             mapStateIndex[toState] = iState++;
         }
         its >> probability;
+        probability = log(probability);
 
-        mLogA.at(mapStateIndex[fromState], mapStateIndex[toState]) = probability;
+        if (fromState == "#") {
+            // Set an initial state probability
+            mLogPi.at(mapStateIndex[toState]) = probability;
+        }
+        else {
+            // Set an transition probability between states
+            mLogA.at(mapStateIndex[fromState], mapStateIndex[toState]) = probability;
+        }
+
 
         // TODO delete
         std::cout << "From : " << mapStateIndex[fromState]
@@ -87,6 +97,7 @@ void HiddenMarkovModel::loadFromFile(
             mapOutputIndex[output] = iOutput++;
         }
         ies >> probability;
+        probability = log(probability);
 
         mLogB.at(mapStateIndex[state], mapOutputIndex[output]) = probability;
 

@@ -18,8 +18,18 @@ ForwardAlgorithmCPU::ForwardAlgorithmCPU(hmm::HiddenMarkovModel &hmm)
         : ForwardAlgorithm(hmm)
 {}
 
+float ForwardAlgorithmCPU::evaluate(Array2D<unsigned> &observation)
+{
+    return ForwardAlgorithm::evaluate(observation);
+}
+
 ForwardAlgorithmGPU::ForwardAlgorithmGPU(hmm::HiddenMarkovModel &hmm)
         : ForwardAlgorithm(hmm)
 {}
+
+float ForwardAlgorithmGPU::evaluate(Array2D<unsigned> &observation)
+{
+    return ForwardAlgorithm::evaluate(observation);
+}
 
 } // namespace hmm

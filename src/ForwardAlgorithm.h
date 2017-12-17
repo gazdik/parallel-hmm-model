@@ -23,6 +23,8 @@ public:
 
     float evaluate(const std::string &observation);
 
+    virtual float evaluate(Array2D<unsigned> & observation);
+
 protected:
 
 };
@@ -35,6 +37,8 @@ class ForwardAlgorithmCPU : public ForwardAlgorithm
 public:
     ForwardAlgorithmCPU(HiddenMarkovModel &hmm);
 
+    virtual float evaluate(Array2D<unsigned> &observation) override;
+
 };
 
 /**
@@ -44,6 +48,8 @@ class ForwardAlgorithmGPU : public ForwardAlgorithm
 {
 public:
     ForwardAlgorithmGPU(HiddenMarkovModel &hmm);
+
+    virtual float evaluate(Array2D<unsigned> &observation) override;
 
 };
 
