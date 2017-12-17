@@ -21,9 +21,9 @@ class ForwardAlgorithm : public HMMAlgorithm
 public:
     ForwardAlgorithm(HiddenMarkovModel &hmm);
 
-    float evaluate(const std::string &observation);
+    virtual float evaluate(const std::string &observation);
 
-    virtual float evaluate(Array2D<unsigned> & observation);
+    virtual float evaluate(Array1D<unsigned int> &observation);
 
 protected:
 
@@ -37,7 +37,9 @@ class ForwardAlgorithmCPU : public ForwardAlgorithm
 public:
     ForwardAlgorithmCPU(HiddenMarkovModel &hmm);
 
-    virtual float evaluate(Array2D<unsigned> &observation) override;
+    virtual float evaluate(Array1D<unsigned int> &observation) override;
+
+    virtual float evaluate(const std::string &observation) override;
 
 };
 

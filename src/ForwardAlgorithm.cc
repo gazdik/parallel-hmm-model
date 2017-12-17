@@ -18,8 +18,25 @@ ForwardAlgorithmCPU::ForwardAlgorithmCPU(hmm::HiddenMarkovModel &hmm)
         : ForwardAlgorithm(hmm)
 {}
 
-float ForwardAlgorithmCPU::evaluate(Array2D<unsigned> &observation)
+float ForwardAlgorithmCPU::evaluate(Array1D<unsigned int> &observation)
 {
+    int observationCount = observation.getNumElements();
+    int stateCount = mHmm.getNumStates();
+    Array2D<float> mat(stateCount, observationCount);
+
+    // Initialiation
+    for(int i = 0; i < stateCount; i++) {
+        //mat.at(i, 0) = mHmm.mLogPi.at(i)+ mHmm.mLogB.at(observation.at())
+    }
+
+    // for each observation
+    for(int t = 1; t < observationCount; t++) {
+        // for each HMM state
+        for (int i = 0; i < mHmm.getNumStates();i++) {
+
+        }
+    }
+
     return ForwardAlgorithm::evaluate(observation);
 }
 
