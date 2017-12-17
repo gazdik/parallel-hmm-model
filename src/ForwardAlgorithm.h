@@ -25,6 +25,10 @@ public:
 
     virtual float evaluate(Array1D<unsigned int> &observation) {}
 
+    virtual Array2D<float> getAlpha(Array1D<unsigned int> &observation) {}
+
+    virtual Array2D<float> getBeta(Array1D<unsigned int> &observation) {}
+
 protected:
 
 };
@@ -39,6 +43,14 @@ public:
 
     virtual float evaluate(Array1D<unsigned int> &observation) override;
 
+    virtual Array2D<float> getAlpha(Array1D<unsigned int> &observation) {}
+
+    virtual Array2D<float> getBeta(Array1D<unsigned int> &observation) {}
+
+private:
+    float logAdd(float x, float y);
+    virtual float backward(Array1D<unsigned int> &observation);
+    virtual float forward(Array1D<unsigned int> &observation);
 };
 
 /**
