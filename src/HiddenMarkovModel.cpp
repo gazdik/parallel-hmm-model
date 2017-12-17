@@ -9,6 +9,7 @@
 #include <iostream>
 #include <set>
 #include <cmath>
+#include <sstream>
 #include "HiddenMarkovModel.h"
 
 using namespace std;
@@ -135,6 +136,21 @@ void HiddenMarkovModel::debugPrint()
         printf("%+6.2f ", mLogPi.at(i));
     }
     printf("\n");
+}
+
+Array1D<std::size_t>
+HiddenMarkovModel::translateObservation(const std::string &strObservation)
+{
+    Array1D<std::size_t> arrObservation;
+
+    stringstream ss(strObservation);
+    string word;
+
+    while (ss >> word) {
+        arrObservation.push(mOutputToIndexMap[word]);
+    }
+
+    return arrObservation;
 }
 
 }

@@ -35,6 +35,8 @@ public:
 
     size_t getNumSymbols() const;
 
+    Array1D<std::size_t> translateObservation(const std::string &strObservation);
+
     /**
      * Total number of states.
      */
@@ -100,6 +102,5 @@ private:
 };
 
 }
-
 
 #endif //GMU_HIDDENMARKOVMODEL_H

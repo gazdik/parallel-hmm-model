@@ -11,6 +11,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <limits>
+#include <cstring>
 #include "Helpers.h"
 
 namespace hmm
@@ -79,6 +80,18 @@ public:
         this->mData = (T*) malloc(sizeof(T) * this->mNumAllocElements);
         this->initializeData(0, this->mNumAllocElements - 1);
     }
+
+
+    Array2D(const Array2D<T> &array) :
+        mNumRows { array.mNumRows },
+        mNumCols { array.mNumCols }
+    {
+        this->mNumAllocElements = array.mNumAllocElements;
+        this->mData = (T *) malloc(sizeof(T) * this->mNumAllocElements);
+
+        std::memcpy(this->mData, array.mData, sizeof(T) * this->mNumAllocElements);
+    }
+
 
     virtual ~Array2D() { }
 
@@ -154,6 +167,15 @@ public:
         this->initializeData(0, this->mNumAllocElements - 1);
     }
 
+    Array1D(const Array1D<T> &array) :
+        mNumElements { array.mNumElements }
+    {
+        this->mNumAllocElements = array.mNumAllocElements;
+        this->mData = (T *) malloc(sizeof(T) * this->mNumAllocElements);
+
+        std::memcpy(this->mData, array.mData, sizeof(T) * this->mNumAllocElements);
+    }
+
     ~Array1D() { }
 
     /**
@@ -172,6 +194,11 @@ public:
     size_t getNumElements() const
     {
         return mNumElements;
+    }
+
+    void push(const T &value)
+    {
+        this->at(mNumElements) = value;
     }
 
 
