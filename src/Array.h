@@ -10,6 +10,7 @@
 
 #include <cstddef>
 #include <cstdlib>
+#include <limits>
 #include "Helpers.h"
 
 namespace hmm
@@ -56,7 +57,7 @@ protected:
     void initializeData(std::size_t firstElement, std::size_t lastElement)
     {
         for (std::size_t i = firstElement; i <= lastElement; i++) {
-            mData[i] = 0;
+            mData[i] = -std::numeric_limits<T>::infinity();
         }
     }
 };

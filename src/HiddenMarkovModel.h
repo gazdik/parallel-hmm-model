@@ -95,6 +95,8 @@ private:
     void saveToFile(const std::string &fileTransitions,
                     const std::string &fileEmissions);
 
+    void debugPrint();
+
 };
 
 }

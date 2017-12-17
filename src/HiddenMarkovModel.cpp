@@ -48,9 +48,11 @@ void HiddenMarkovModel::loadFromFile(
     while (its.good())
     {
         its >> fromState;
-        if (mStateToIndexMap.count(fromState) == 0) {
-            mIndexToStateMap[iState] = fromState;
-            mStateToIndexMap[fromState] = iState++;
+        if (fromState != "#") {
+            if (mStateToIndexMap.count(fromState) == 0) {
+                mIndexToStateMap[iState] = fromState;
+                mStateToIndexMap[fromState] = iState++;
+            }
         }
         its >> toState;
         if (mStateToIndexMap.count(toState) == 0) {
@@ -58,7 +60,7 @@ void HiddenMarkovModel::loadFromFile(
             mStateToIndexMap[toState] = iState++;
         }
         its >> probability;
-        probability = log(probability);
+        probability = convertToLog(probability);
 
         if (fromState == "#") {
             // Set an initial state probability
@@ -70,9 +72,9 @@ void HiddenMarkovModel::loadFromFile(
         }
 
         // TODO delete
-        std::cout << "From : " << mStateToIndexMap[fromState]
-                  << ", To: " << mStateToIndexMap[toState]
-                  << ", Probability: " << mLogA.at(mStateToIndexMap[fromState], mStateToIndexMap[toState]) << std::endl;
+//        std::cout << "From : " << mStateToIndexMap[fromState]
+//                  << ", To: " << mStateToIndexMap[toState]
+//                  << ", Probability: " << mLogA.at(mStateToIndexMap[fromState], mStateToIndexMap[toState]) << std::endl;
     }
 
     ifstream ies(fileEmissions);
@@ -94,18 +96,45 @@ void HiddenMarkovModel::loadFromFile(
             mOutputToIndexMap[output] = iOutput++;
         }
         ies >> probability;
-        probability = log(probability);
+        probability = convertToLog(probability);
 
         mLogB.at(mStateToIndexMap[state], mOutputToIndexMap[output]) = probability;
 
         // TODO delete
-        std::cout << "State : " << mStateToIndexMap[state]
-                  << ", Output: " << mOutputToIndexMap[output]
-                  << ", Probability: "
-                  << mLogB.at(mStateToIndexMap[state], mOutputToIndexMap[output])
-                  << std::endl;
+//        std::cout << "State : " << mStateToIndexMap[state]
+//                  << ", Output: " << mOutputToIndexMap[output]
+//                  << ", Probability: "
+//                  << mLogB.at(mStateToIndexMap[state], mOutputToIndexMap[output])
+//                  << std::endl;
     }
 
+    debugPrint();
+}
+
+void HiddenMarkovModel::debugPrint()
+{
+    // Print transition matrix
+    printf("Transition probability matrix A:\n");
+    for (size_t x = 0; x < mLogA.getNumRows(); x++) {
+        for (size_t y = 0; y < mLogA.getNumCols(); y++) {
+            printf("%+6.2f ", mLogA.at(x, y));
+        }
+        printf("\n");
+    }
+
+    printf("Emission probability matrix B:\n");
+    for (size_t x = 0; x < mLogB.getNumRows(); x++) {
+        for (size_t y = 0; y < mLogB.getNumCols(); y++) {
+            printf("%+6.2f ", mLogB.at(x, y));
+        }
+        printf("\n");
+    }
+
+    printf("Initial probability vector PI:\n");
+    for (size_t i = 0; i < mLogPi.getNumElements(); i++) {
+        printf("%+6.2f ", mLogPi.at(i));
+    }
+    printf("\n");
 }
 
 }
