@@ -7,6 +7,7 @@
 
 #include "HiddenMarkovModel.h"
 #include "ViterbiAlgorithm.h"
+#include "ForwardAlgorithm.h"
 #include <fstream>
 #include <iostream>
 
@@ -31,6 +32,7 @@ int main(int argc, char *argv[])
     }
 
     HiddenMarkovModel hmm(argv[1], argv[2]);
+    ForwardAlgorithmCPU forward(hmm);
     ViterbiAlgorithmCPU viterbi(hmm);
 
     if (argc == 4) {
@@ -40,9 +42,11 @@ int main(int argc, char *argv[])
         while (ifs.getline(buffer, 256)) {
             string observation(buffer);
 
-            auto result = viterbi.evaluate(observation);
+            auto stateSequence = viterbi.evaluate(observation);
+            float likelihood = forward.evaluate(observation);
             cout << "Observation: " << observation << endl;
-            cout << "Sequence:    " << result << endl;
+            cout << "Likelihood:  " << likelihood << endl;
+            cout << "Sequence:    " << stateSequence << endl;
         }
     }
 

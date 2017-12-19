@@ -93,11 +93,10 @@ ViterbiAlgorithmCPU::evaluate(std::vector<std::uint32_t> &o)
     return path;
 }
 
-string ViterbiAlgorithmCPU::evaluate(const std::string &strObservation)
+string ViterbiAlgorithm::evaluate(const std::string &strObservation)
 {
     auto observation = mHmm.translateObservation(strObservation);
-
-    auto sequence = evaluate(observation);
+    auto sequence = this->evaluate(observation);
 
     return mHmm.translateStateSequence(sequence);
 }

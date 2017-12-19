@@ -21,7 +21,7 @@ class ViterbiAlgorithm : public HMMAlgorithm
 public:
     ViterbiAlgorithm(HiddenMarkovModel &hmm);
 
-    virtual std::string evaluate(const std::string &observation) {};
+    std::string evaluate(const std::string &observation);
     virtual std::vector<std::uint32_t> evaluate(
             std::vector<std::uint32_t> &observation) {};
 
@@ -35,12 +35,9 @@ class ViterbiAlgorithmCPU : public ViterbiAlgorithm
 public:
     ViterbiAlgorithmCPU(HiddenMarkovModel &hmm);
 
+    using ViterbiAlgorithm::evaluate;
     virtual std::vector<std::uint32_t>
     evaluate(std::vector<std::uint32_t> &observation) override;
-
-    virtual std::string evaluate(const std::string &observation) override;
-
-
 };
 
 /**

@@ -19,11 +19,17 @@ ForwardAlgorithm::ForwardAlgorithm(hmm::HiddenMarkovModel &hmm)
         : HMMAlgorithm(hmm)
 {}
 
+float ForwardAlgorithm::evaluate(const std::string &strObservation)
+{
+    auto observation = mHmm.translateObservation(strObservation);
+    return evaluate(observation);
+}
+
 ForwardAlgorithmCPU::ForwardAlgorithmCPU(hmm::HiddenMarkovModel &hmm)
         : ForwardAlgorithm(hmm)
 {}
 
-float ForwardAlgorithmCPU::evaluate(Array1D<unsigned int> &observation)
+float ForwardAlgorithmCPU::evaluate(vector<uint32_t> &observation)
 {
     float alpha = forward(observation);
     float beta = backward(observation);
@@ -32,26 +38,26 @@ float ForwardAlgorithmCPU::evaluate(Array1D<unsigned int> &observation)
     return alpha;
 }
 
-Array2D<float> ForwardAlgorithmCPU::getAlpha(Array1D<unsigned int> &observation)
+Array2D<float> ForwardAlgorithmCPU::getAlpha(vector<uint32_t> &observation)
 {
-    int observationCount = observation.getNumElements();
-    int stateCount = mHmm.getNumStates();
+    uint32_t observationCount = (uint32_t) observation.size();
+    uint32_t stateCount = mHmm.getNumStates();
     Array2D<float> mat(stateCount, observationCount);
 
     // Initialiation
     // for each state
     for (int i = 0; i < stateCount; i++) {
-        mat.at(i, 0) = mHmm.mLogPi.at(i) + mHmm.mLogB.at(i, observation.at(0));
+        mat.at(i, 0) = mHmm.mLogPi->at(i) + mHmm.mLogB->at(i, observation.at(0));
     }
 
     float temp;
     // for each observation
-    for (int t = 1; t < observationCount; t++) {
+    for (uint32_t t = 1; t < observationCount; t++) {
         // for each HMM state
-        for (int j = 0; j < mHmm.getNumStates(); j++) {
-            for (int i = 0; i < mHmm.getNumStates(); i++) {
-                temp = mat.at(i, t - 1) + mHmm.mLogA.at(i, j) +
-                       mHmm.mLogB.at(j, observation.at(t));
+        for (uint32_t j = 0; j < mHmm.getNumStates(); j++) {
+            for (uint32_t i = 0; i < mHmm.getNumStates(); i++) {
+                temp = mat.at(i, t - 1) + mHmm.mLogA->at(i, j) +
+                       mHmm.mLogB->at(j, observation.at(t));
                 mat.at(j, t) = logAdd(mat.at(j, t), temp);
             }
         }
@@ -61,11 +67,11 @@ Array2D<float> ForwardAlgorithmCPU::getAlpha(Array1D<unsigned int> &observation)
 }
 
 
-float ForwardAlgorithmCPU::forward(Array1D<unsigned int> &observation)
+float ForwardAlgorithmCPU::forward(vector<uint32_t> &observation)
 {
     Array2D<float> alpha = getAlpha(observation);
-    int observationCount = observation.getNumElements();
-    int stateCount = mHmm.getNumStates();
+    uint32_t observationCount = (uint32_t) observation.size();
+    uint32_t stateCount = mHmm.getNumStates();
 
     float logLikelyhood = -INFINITY;
     for (int i = 0; i < stateCount; i++) {
@@ -75,15 +81,15 @@ float ForwardAlgorithmCPU::forward(Array1D<unsigned int> &observation)
     return logLikelyhood;
 }
 
-Array2D<float> ForwardAlgorithmCPU::getBeta(Array1D<unsigned int> &observation)
+Array2D<float> ForwardAlgorithmCPU::getBeta(vector<uint32_t> &observation)
 {
-    int observationCount = observation.getNumElements();
-    int stateCount = mHmm.getNumStates();
+    uint32_t observationCount = (uint32_t) observation.size();
+    uint32_t stateCount = mHmm.getNumStates();
     Array2D<float> mat(stateCount, observationCount);
 
     // Initialiation
     // for each state
-    for (int i = 0; i < stateCount; i++) {
+    for (uint32_t i = 0; i < stateCount; i++) {
         // 0 is log(1)
         mat.at(i, observationCount - 1) = 0;
     }
@@ -92,10 +98,10 @@ Array2D<float> ForwardAlgorithmCPU::getBeta(Array1D<unsigned int> &observation)
     // for each observation
     for (int t = observationCount - 2; t >= 0; t--) {
         // for each HMM state
-        for (int i = 0; i < stateCount; i++) {
-            for (int j = 0; j < stateCount; j++) {
-                temp = mat.at(j, t + 1) + mHmm.mLogA.at(i, j) +
-                       mHmm.mLogB.at(j, observation.at(t + 1));
+        for (uint32_t i = 0; i < stateCount; i++) {
+            for (uint32_t j = 0; j < stateCount; j++) {
+                temp = mat.at(j, t + 1) + mHmm.mLogA->at(i, j) +
+                       mHmm.mLogB->at(j, observation.at(t + 1));
                 mat.at(i, t) = logAdd(mat.at(i, t), temp);
             }
         }
@@ -105,7 +111,7 @@ Array2D<float> ForwardAlgorithmCPU::getBeta(Array1D<unsigned int> &observation)
 
 }
 
-float ForwardAlgorithmCPU::backward(Array1D<unsigned int> &observation)
+float ForwardAlgorithmCPU::backward(vector<uint32_t> &observation)
 {
     Array2D<float> beta = getBeta(observation);
     int stateCount = mHmm.getNumStates();
@@ -113,9 +119,9 @@ float ForwardAlgorithmCPU::backward(Array1D<unsigned int> &observation)
     float logLikelyhood = -INFINITY;
     for (int i = 0; i < stateCount; i++) {
         logLikelyhood = logAdd(logLikelyhood, beta.at(i, 0) +
-                                              mHmm.mLogB.at(i,
+                                              mHmm.mLogB->at(i,
                                                             observation.at(0)) +
-                                              mHmm.mLogPi.at(i));
+                                              mHmm.mLogPi->at(i));
     }
 
     return logLikelyhood;
@@ -141,9 +147,5 @@ ForwardAlgorithmGPU::ForwardAlgorithmGPU(hmm::HiddenMarkovModel &hmm)
         : ForwardAlgorithm(hmm)
 {}
 
-float ForwardAlgorithmGPU::evaluate(Array1D<unsigned> &observation)
-{
-    return ForwardAlgorithm::evaluate(observation);
-}
 
 } // namespace hmm

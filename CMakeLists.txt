@@ -3,7 +3,7 @@ project(gmu)
 
 set(CMAKE_CXX_STANDARD 14)
 
-#find_package(OpenCL REQUIRED)
+find_package(OpenCL REQUIRED)
 include_directories(${OpenCL_INCLUDE_DIRS})
 
 set(SOURCE_FILES src/main.cpp src/HiddenMarkovModel.cpp src/HiddenMarkovModel.h

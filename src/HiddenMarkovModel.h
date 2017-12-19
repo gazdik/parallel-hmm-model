@@ -31,7 +31,7 @@ public:
 
     std::uint32_t getNumSymbols() const;
 
-    std::vector<unsigned int> translateObservation(
+    std::vector<uint32_t > translateObservation(
             const std::string &strObservation);
 
     std::string translateStateSequence(const std::vector<uint32_t> &sequence);

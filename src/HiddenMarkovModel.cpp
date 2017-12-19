@@ -115,7 +115,7 @@ void HiddenMarkovModel::debugPrint()
     printf("\n");
 }
 
-std::vector<unsigned int>
+std::vector<uint32_t>
 HiddenMarkovModel::translateObservation(const std::string &strObservation)
 {
     vector<unsigned> observation;

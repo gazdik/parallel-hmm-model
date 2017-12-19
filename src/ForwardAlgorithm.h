@@ -21,15 +21,8 @@ class ForwardAlgorithm : public HMMAlgorithm
 public:
     ForwardAlgorithm(HiddenMarkovModel &hmm);
 
-    virtual float evaluate(const std::string &observation) {}
-
-    virtual float evaluate(Array1D<unsigned int> &observation) {}
-
-    virtual Array2D<float> getAlpha(Array1D<unsigned int> &observation) {}
-
-    virtual Array2D<float> getBeta(Array1D<unsigned int> &observation) {}
-
-protected:
+    virtual float evaluate(const std::string &observation);
+    virtual float evaluate(std::vector<uint32_t> &observation) {}
 
 };
 
@@ -41,16 +34,15 @@ class ForwardAlgorithmCPU : public ForwardAlgorithm
 public:
     ForwardAlgorithmCPU(HiddenMarkovModel &hmm);
 
-    virtual float evaluate(Array1D<unsigned int> &observation) override;
-
-    virtual Array2D<float> getAlpha(Array1D<unsigned int> &observation) {}
-
-    virtual Array2D<float> getBeta(Array1D<unsigned int> &observation) {}
+    using ForwardAlgorithm::evaluate;
+    virtual float evaluate(std::vector<uint32_t> &observation) override;
+    virtual Array2D<float> getAlpha(std::vector<uint32_t> &observation);
+    virtual Array2D<float> getBeta(std::vector<uint32_t> &observation);
 
 private:
     float logAdd(float x, float y);
-    virtual float backward(Array1D<unsigned int> &observation);
-    virtual float forward(Array1D<unsigned int> &observation);
+    virtual float backward(std::vector<uint32_t> &observation);
+    virtual float forward(std::vector<uint32_t> &observation);
 };
 
 /**
@@ -60,8 +52,6 @@ class ForwardAlgorithmGPU : public ForwardAlgorithm
 {
 public:
     ForwardAlgorithmGPU(HiddenMarkovModel &hmm);
-
-    virtual float evaluate(Array1D<unsigned> &observation) override;
 
 };
 
