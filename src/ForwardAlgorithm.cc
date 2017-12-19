@@ -34,7 +34,11 @@ float ForwardAlgorithmCPU::evaluate(vector<uint32_t> &observation)
     float alpha = forward(observation);
     float beta = backward(observation);
 
-    assert(alpha + beta < 1e-5);
+    if (!(alpha + beta < 1e-5)) {
+        cerr << "ForwardAlgorithm: alpha and beta are different." << endl
+             << "alpha: " << alpha << endl
+             << "beta:  " << beta << endl;
+    }
     return alpha;
 }
 
