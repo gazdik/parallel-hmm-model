@@ -18,8 +18,4 @@ BaumWelchAlgorithmCPU::BaumWelchAlgorithmCPU(HiddenMarkovModel &hmm)
         : BaumWelchAlgorithm(hmm)
 {}
 
-BaumWelchAlgorithmGPU::BaumWelchAlgorithmGPU(HiddenMarkovModel &hmm)
-        : BaumWelchAlgorithm(hmm)
-{}
-
 } // namespace hmm

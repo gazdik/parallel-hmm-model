@@ -33,16 +33,6 @@ public:
 
 };
 
-/**
- * GPU implementation of Baum-Welch Algorithm
- */
-class BaumWelchAlgorithmGPU : public BaumWelchAlgorithm
-{
-public:
-    BaumWelchAlgorithmGPU(HiddenMarkovModel &hmm);
-
-};
-
 } // namespace hmm
 
 

@@ -143,9 +143,4 @@ float ForwardAlgorithmCPU::logAdd(float x, float y)
     return result;
 }
 
-ForwardAlgorithmGPU::ForwardAlgorithmGPU(hmm::HiddenMarkovModel &hmm)
-        : ForwardAlgorithm(hmm)
-{}
-
-
 } // namespace hmm

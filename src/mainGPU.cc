@@ -37,9 +37,7 @@ int main(int argc, char *argv[])
 
     cl::Context context;
 
-
     HiddenMarkovModel(argv[1], argv[2]);
-
 
     return EXIT_SUCCESS;
 }

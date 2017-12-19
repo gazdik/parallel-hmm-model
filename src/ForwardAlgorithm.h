@@ -45,16 +45,6 @@ private:
     virtual float forward(std::vector<uint32_t> &observation);
 };
 
-/**
- * GPU implementation of Forward Algorithm
- */
-class ForwardAlgorithmGPU : public ForwardAlgorithm
-{
-public:
-    ForwardAlgorithmGPU(HiddenMarkovModel &hmm);
-
-};
-
 } // namespace hmm
 
 

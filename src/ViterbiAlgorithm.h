@@ -40,16 +40,6 @@ public:
     evaluate(std::vector<std::uint32_t> &observation) override;
 };
 
-/**
- * GPU implementation of Viterbi Algorithm
- */
-class ViterbiAlgorithmGPU : public ViterbiAlgorithm
-{
-public:
-    ViterbiAlgorithmGPU(HiddenMarkovModel &hmm);
-
-};
-
 } // namespace hmm
 
 

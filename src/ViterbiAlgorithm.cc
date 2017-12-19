@@ -101,10 +101,4 @@ string ViterbiAlgorithm::evaluate(const std::string &strObservation)
     return mHmm.translateStateSequence(sequence);
 }
 
-
-ViterbiAlgorithmGPU::ViterbiAlgorithmGPU(HiddenMarkovModel &hmm)
-        : ViterbiAlgorithm(hmm)
-{}
-
-
 } // namespace hmm
