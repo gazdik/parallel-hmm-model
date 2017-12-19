@@ -45,8 +45,8 @@ int main(int argc, char *argv[])
             auto stateSequence = viterbi.evaluate(observation);
             float likelihood = forward.evaluate(observation);
             cout << "Observation: " << observation << endl;
-            cout << "Likelihood:  " << likelihood << endl;
             cout << "Sequence:    " << stateSequence << endl;
+            cout << "Likelihood:  " << likelihood << endl;
         }
     }
 
