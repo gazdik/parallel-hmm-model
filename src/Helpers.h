@@ -14,7 +14,8 @@
 namespace hmm
 {
 
-inline std::size_t index1D(std::size_t x, std::size_t y, std::size_t width)
+template<typename T>
+inline T index1D(T x, T y, T width)
 {
     return y + (x * width);
 }

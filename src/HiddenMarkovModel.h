@@ -10,6 +10,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 #include "Array.h"
 
 namespace hmm
@@ -26,16 +27,14 @@ public:
     HiddenMarkovModel(const std::string &fileTransitions,
                       const std::string &fileEmissions);
 
-    HiddenMarkovModel(unsigned numStates, unsigned numSymbols);
+    std::uint32_t getNumStates() const;
 
-    HiddenMarkovModel(const Array2D<float> &A, const Array2D<float> &B,
-                      const Array1D<float> &pi);
+    std::uint32_t getNumSymbols() const;
 
-    size_t getNumStates() const;
+    std::vector<unsigned int> translateObservation(
+            const std::string &strObservation);
 
-    size_t getNumSymbols() const;
-
-    Array1D<std::size_t> translateObservation(const std::string &strObservation);
+    std::string translateStateSequence(const std::vector<uint32_t> &sequence);
 
     /**
      * Total number of states.
@@ -49,34 +48,34 @@ public:
      * Transition probability matrix A, each element (i,j) represents the
      * probability of moving from state i to state j.
      */
-    Array2D<float> mLogA;
+    Array2D<float> *mLogA;
     /**
      * Emission probability matrix B, each element (i,j) represents
      * the probability of observation symbol j being generated from state i.
      */
-    Array2D<float> mLogB;
+    Array2D<float> *mLogB;
     /**
      * Vector of initial state probabilities.
      * Each element i represents the probability that the Markov chain will
      * start in state i.
      */
-    Array1D<float> mLogPi;
+    Array1D<float> *mLogPi;
     /**
      * Mapping between indices and original vocabulary symbols.
      */
-    std::map<std::size_t, std::string> mIndexToOutputMap;
+    std::map<std::uint32_t, std::string> mIndexToOutputMap;
     /**
      * Mapping between original vocabulary symbols to indices.
      */
-    std::map<std::string, std::size_t> mOutputToIndexMap;
+    std::map<std::string, std::uint32_t> mOutputToIndexMap;
     /**
      * Mapping between indices and state names.
      */
-    std::map<std::size_t, std::string> mIndexToStateMap;
+    std::map<std::uint32_t, std::string> mIndexToStateMap;
     /**
      * Mapping between state names and indices.
      */
-    std::map<std::string, std::size_t> mStateToIndexMap;
+    std::map<std::string, std::uint32_t> mStateToIndexMap;
 
 private:
 
@@ -91,10 +90,14 @@ private:
      * Each row of the file 'fileEmissions' is of the form
      * 'state output P(output|state)'
      */
-    void loadFromFile(const std::string &fileTransitions,
-                      const std::string &fileEmissions);
 
-    void saveToFile(const std::string &fileTransitions,
+    void loadModel(const std::string &fileTransitions,
+                   const std::string &fileEmissions);
+
+    void loadSymbols(const std::string &fileTransitions,
+                     const std::string &fileEmissions);
+
+    void storeModel(const std::string &fileTransitions,
                     const std::string &fileEmissions);
 
     void debugPrint();

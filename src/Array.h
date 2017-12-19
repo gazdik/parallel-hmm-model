@@ -10,23 +10,47 @@
 
 #include <cstddef>
 #include <cstdlib>
+#include <cstdint>
 #include <limits>
 #include <cstring>
+#include <iostream>
 #include "Helpers.h"
 
 namespace hmm
 {
 
-template<typename T>
-class ArrayInterface
+/**
+ * 1D array.
+ * @tparam T
+ */
+template <typename T>
+class Array1D
 {
 public:
-
-    ArrayInterface()
+    Array1D(std::uint32_t n) :
+            mCount { n }
     {
+        mData = new T[mCount];
+        this->initializeData(0, mCount - 1);
     }
 
-    virtual ~ArrayInterface()
+    Array1D(const Array1D<T> &o) :
+        mCount { o.mCount },
+        mFreeMemory { o.mFreeMemory }
+    {
+        mData = new T[mCount];
+        std::memcpy(mData, o.mData, sizeof(T) * mCount);
+    }
+
+    Array1D(Array1D<T> && o) :
+            mCount { o.mCount },
+            mFreeMemory { o.mFreeMemory }
+    {
+        mData = o.mData;
+        o.mFreeMemory = false;
+    }
+
+    virtual ~Array1D()
     {
         if (mFreeMemory)
             free(mData);
@@ -43,55 +67,73 @@ public:
         return mData;
     }
 
+    /**
+     * Return a reference to the element at position (x,y) in the
+     * 2D array.
+     * @return Reference to the element at the specified position.
+     */
+    T &at(std::uint32_t n)
+    {
+        if (n >= mCount) {
+            throw std::out_of_range("Array::at(n): n = " + std::to_string(n)
+                                    + " >= size = " + std::to_string(mCount));
+        }
+
+        return mData[n];
+    }
+
+    /**
+     * Return the number of elements in the container.
+     * @return
+     */
+    std::uint32_t size() const
+    {
+        return mCount;
+    }
+
 protected:
     T *mData = nullptr;
-    std::size_t mNumAllocElements = 0;
+    std::uint32_t mCount;
     bool mFreeMemory = true;
 
-    /*
-     * Allocation step
-     */
-    static const std::size_t ALLOC_STEP = 100;
-
-protected:
-
-    void initializeData(std::size_t firstElement, std::size_t lastElement)
+    void initializeData(std::uint32_t firstElement, std::uint32_t lastElement)
     {
-        for (std::size_t i = firstElement; i <= lastElement; i++) {
+        for (std::uint32_t i = firstElement; i <= lastElement; i++) {
             mData[i] = -std::numeric_limits<T>::infinity();
         }
     }
 };
 
 /**
- * Dynamically allocated 2D array.
+ * 2D Array
  * @tparam T
  */
 template <typename T>
-class Array2D : public ArrayInterface<T>
+class Array2D : public Array1D<T>
 {
 public:
 
-    Array2D(std::size_t numRows = 0, std::size_t numCols = 0) :
+    Array2D(std::uint32_t numRows, std::uint32_t numCols) :
+            Array1D<T>( numRows * numCols),
             mNumRows { numRows },
             mNumCols { numCols }
     {
-        this->mNumAllocElements = mNumRows * mNumCols + this->ALLOC_STEP;
-        this->mData = (T*) malloc(sizeof(T) * this->mNumAllocElements);
-        this->initializeData(0, this->mNumAllocElements - 1);
     }
 
-
-    Array2D(const Array2D<T> &array) :
-        mNumRows { array.mNumRows },
-        mNumCols { array.mNumCols }
+    Array2D(const Array2D<T> &o) :
+            Array1D<T>(o),
+            mNumRows { o.mNumRows },
+            mNumCols { o.mNumCols }
     {
-        this->mNumAllocElements = array.mNumAllocElements;
-        this->mData = (T *) malloc(sizeof(T) * this->mNumAllocElements);
-
-        std::memcpy(this->mData, array.mData, sizeof(T) * this->mNumAllocElements);
     }
 
+    Array2D(Array2D<T> &&o) :
+            Array1D<T>(o),
+            mNumRows { o.mNumRows },
+            mNumCols { o.mNumCols}
+    {
+
+    }
 
     virtual ~Array2D() { }
 
@@ -100,131 +142,29 @@ public:
      * 2D array.
      * @return Reference to the element at the specified position.
      */
-    T &at(std::size_t x, std::size_t y)
+    T &at(std::uint32_t x, std::uint32_t y)
     {
-        if (x >= mNumRows || y >= mNumCols)
-            reallocate(x + 1, y + 1);
+        std::uint32_t n = index1D(x, y, mNumCols);
 
-        std::size_t i = index1D(x, y, mNumCols);
-        return this->mData[i];
+        return Array1D<T>::at(n);
     }
 
-    size_t getNumRows() const
+    std::uint32_t getNumRows() const
     {
         return mNumRows;
     }
 
-    size_t getNumCols() const
+    std::uint32_t getNumCols() const
     {
         return mNumCols;
     }
 
-    size_t getNumElements() const
-    {
-        return mNumRows * mNumCols;
-    }
-
 private:
-
-    void reallocate(std::size_t numRows, std::size_t numCols)
-    {
-        mNumRows = numRows;
-        mNumCols = numCols;
-
-        std::size_t numElements = mNumRows * mNumCols;
-        if (numElements < this->mNumAllocElements)
-            return;
-
-        std::size_t newNumElements = numElements + this->ALLOC_STEP;
-        std::size_t prevNumElements = this->mNumAllocElements;
-
-        this->mNumAllocElements = newNumElements;
-        this->mData = (T *) std::realloc(this->mData, sizeof(T) * this->mNumAllocElements);
-
-        this->initializeData(prevNumElements, newNumElements - 1);
-    }
-
-private:
-    std::size_t mNumRows;
-    std::size_t mNumCols;
+    std::uint32_t mNumRows;
+    std::uint32_t mNumCols;
 };
 
 
-/**
- * Dynamically allocated 2D array.
- * @tparam T
- */
-template <typename T>
-class Array1D : public ArrayInterface<T>
-{
-public:
-    Array1D(std::size_t n = 0) :
-            mNumElements { n }
-    {
-        this->mNumAllocElements = mNumElements + this->ALLOC_STEP;
-        this->mData = (T*) malloc(sizeof(T) * this->mNumAllocElements);
-
-        this->initializeData(0, this->mNumAllocElements - 1);
-    }
-
-    Array1D(const Array1D<T> &array) :
-        mNumElements { array.mNumElements }
-    {
-        this->mNumAllocElements = array.mNumAllocElements;
-        this->mData = (T *) malloc(sizeof(T) * this->mNumAllocElements);
-
-        std::memcpy(this->mData, array.mData, sizeof(T) * this->mNumAllocElements);
-    }
-
-    ~Array1D() { }
-
-    /**
-     * Return a reference to the element at position (x,y) in the
-     * 2D array.
-     * @return Reference to the element at the specified position.
-     */
-    T &at(std::size_t n)
-    {
-        if (n >= mNumElements)
-            reallocate(n + 1);
-
-        return this->mData[n];
-    }
-
-    size_t getNumElements() const
-    {
-        return mNumElements;
-    }
-
-    void push(const T &value)
-    {
-        this->at(mNumElements) = value;
-    }
-
-
-private:
-
-    /**
-     * Allocate memory for a new element at position (x,y)
-     */
-    void reallocate(std::size_t numElements)
-    {
-        mNumElements = numElements;
-        if (numElements < this->mNumAllocElements)
-            return;
-
-        std::size_t newNumElements = numElements + this->ALLOC_STEP;
-        std::size_t prevNumElements = this->mNumAllocElements;
-
-        this->mNumAllocElements = newNumElements;
-        this->mData = (T*) std::realloc(this->mData, sizeof(T) * this->mNumAllocElements);
-
-        this->initializeData(prevNumElements, newNumElements - 1);
-    }
-
-private:
-    std::size_t mNumElements;
-};
 
 } // namespace hmm
 

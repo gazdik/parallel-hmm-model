@@ -1,15 +1,14 @@
 /**
  * @author      Peter Gazdík <xgazdi03(at)stud.fit.vutbr.cz>
  *              Michal Klčo <xklcom00(at)stud.fit.vutbr.cz>
- * @date        02/12/17
+ * @date        17/12/17
  * @copyright   The MIT License (MIT)
  */
-
 #include "HiddenMarkovModel.h"
-#include "ViterbiAlgorithm.h"
 #include <fstream>
 #include <iostream>
-
+#include <CL/cl.hpp>
+#include <cstdlib>
 
 using namespace hmm;
 using namespace std;
@@ -22,29 +21,25 @@ int main(int argc, char *argv[])
 
     // Test input files
     if (not ifstream(argv[1]).good()) {
-        cerr << "File " << argv[1] << " doesn't exist.";
+        cerr << "File " << argv[1] << " doesn't exists";
         return EXIT_FAILURE;
     }
     if (not ifstream(argv[2]).good()) {
-        cerr << "File " << argv[2] << " doesn't exist.";
+        cerr << "File " << argv[2] << " doesn't exists";
         return EXIT_FAILURE;
     }
 
-    HiddenMarkovModel hmm(argv[1], argv[2]);
-    ViterbiAlgorithmCPU viterbi(hmm);
 
-    if (argc == 4) {
-        ifstream ifs(argv[3]);
-        char buffer[256];
+    vector<cl::Platform> platforms;
+    vector<cl::Device> platform_devices;
+    cl::Platform::get(&platforms);
+    cl::Device device;
 
-        while (ifs.getline(buffer, 256)) {
-            string observation(buffer);
+    cl::Context context;
 
-            auto result = viterbi.evaluate(observation);
-            cout << "Observation: " << observation << endl;
-            cout << "Sequence:    " << result << endl;
-        }
-    }
+
+    HiddenMarkovModel(argv[1], argv[2]);
+
 
     return EXIT_SUCCESS;
 }

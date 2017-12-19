@@ -10,6 +10,7 @@
 #include <set>
 #include <cmath>
 #include <sstream>
+#include <vector>
 #include "HiddenMarkovModel.h"
 
 using namespace std;
@@ -20,93 +21,69 @@ namespace hmm
 HiddenMarkovModel::HiddenMarkovModel(const std::string &fileTransitions,
                                      const std::string &fileEmissions)
 {
-    loadFromFile(fileTransitions, fileEmissions);
+    loadSymbols(fileTransitions, fileEmissions);
+
+    mLogA = new Array2D<float>((uint32_t) mStateToIndexMap.size(),
+                        (uint32_t) mStateToIndexMap.size());
+    mLogB = new Array2D<float>((uint32_t) mStateToIndexMap.size(),
+                        (uint32_t) mOutputToIndexMap.size());
+    mLogPi = new Array1D<float>((uint32_t) mStateToIndexMap.size());
+
+    loadModel(fileTransitions, fileEmissions);
 }
 
-size_t HiddenMarkovModel::getNumStates() const
+uint32_t HiddenMarkovModel::getNumStates() const
 {
-    return mLogA.getNumRows();
+    return mLogA->getNumRows();
 }
 
-size_t HiddenMarkovModel::getNumSymbols() const
+uint32_t HiddenMarkovModel::getNumSymbols() const
 {
-    return mLogB.getNumCols();
+    return mLogB->getNumCols();
 }
 
-void HiddenMarkovModel::loadFromFile(
+void HiddenMarkovModel::loadModel(
         const std::string &fileTransitions,
         const std::string &fileEmissions)
 {
-    ifstream its(fileTransitions);
+    ifstream ifs(fileTransitions);
 
     float probability;
-
-    size_t iState = 0;
     string fromState;
     string toState;
 
     // Read transition probabilities from the file
-    while (its.good())
+    while (ifs.good())
     {
-        its >> fromState;
-        if (fromState != "#") {
-            if (mStateToIndexMap.count(fromState) == 0) {
-                mIndexToStateMap[iState] = fromState;
-                mStateToIndexMap[fromState] = iState++;
-            }
-        }
-        its >> toState;
-        if (mStateToIndexMap.count(toState) == 0) {
-            mIndexToStateMap[iState] = toState;
-            mStateToIndexMap[toState] = iState++;
-        }
-        its >> probability;
+        ifs >> fromState;
+        ifs >> toState;
+        ifs >> probability;
         probability = convertToLog(probability);
 
+        // Set an initial state probability
         if (fromState == "#") {
-            // Set an initial state probability
-            mLogPi.at(mStateToIndexMap[toState]) = probability;
+            mLogPi->at(mStateToIndexMap[toState]) = probability;
         }
+        // Set a transition probability between states
         else {
-            // Set an transition probability between states
-            mLogA.at(mStateToIndexMap[fromState], mStateToIndexMap[toState]) = probability;
+            mLogA->at(mStateToIndexMap[fromState], mStateToIndexMap[toState]) = probability;
         }
-
-        // TODO delete
-//        std::cout << "From : " << mStateToIndexMap[fromState]
-//                  << ", To: " << mStateToIndexMap[toState]
-//                  << ", Probability: " << mLogA.at(mStateToIndexMap[fromState], mStateToIndexMap[toState]) << std::endl;
     }
 
-    ifstream ies(fileEmissions);
+    ifs.close();
+    ifs.open(fileEmissions);
     string state;
     string output;
-    size_t iOutput = 0;
 
     // Read emission probabilities from the file
-    while (ies.good())
+    while (ifs.good())
     {
-        ies >> state;
-        if (mStateToIndexMap.count(state) == 0) {
-            mIndexToStateMap[iState] = state;
-            mStateToIndexMap[state] = iState++;
-        }
-        ies >> output;
-        if (mOutputToIndexMap.count(output) == 0) {
-            mIndexToOutputMap[iOutput] = output;
-            mOutputToIndexMap[output] = iOutput++;
-        }
-        ies >> probability;
+        ifs >> state;
+        ifs >> output;
+        ifs >> probability;
         probability = convertToLog(probability);
 
-        mLogB.at(mStateToIndexMap[state], mOutputToIndexMap[output]) = probability;
-
-        // TODO delete
-//        std::cout << "State : " << mStateToIndexMap[state]
-//                  << ", Output: " << mOutputToIndexMap[output]
-//                  << ", Probability: "
-//                  << mLogB.at(mStateToIndexMap[state], mOutputToIndexMap[output])
-//                  << std::endl;
+        mLogB->at(mStateToIndexMap[state], mOutputToIndexMap[output]) = probability;
     }
 
     debugPrint();
@@ -116,41 +93,103 @@ void HiddenMarkovModel::debugPrint()
 {
     // Print transition matrix
     printf("Transition probability matrix A:\n");
-    for (size_t x = 0; x < mLogA.getNumRows(); x++) {
-        for (size_t y = 0; y < mLogA.getNumCols(); y++) {
-            printf("%+6.2f ", mLogA.at(x, y));
+    for (uint32_t x = 0; x < mLogA->getNumRows(); x++) {
+        for (uint32_t y = 0; y < mLogA->getNumCols(); y++) {
+            printf("%+6.2f ", mLogA->at(x, y));
         }
         printf("\n");
     }
 
     printf("Emission probability matrix B:\n");
-    for (size_t x = 0; x < mLogB.getNumRows(); x++) {
-        for (size_t y = 0; y < mLogB.getNumCols(); y++) {
-            printf("%+6.2f ", mLogB.at(x, y));
+    for (uint32_t x = 0; x < mLogB->getNumRows(); x++) {
+        for (uint32_t y = 0; y < mLogB->getNumCols(); y++) {
+            printf("%+6.2f ", mLogB->at(x, y));
         }
         printf("\n");
     }
 
     printf("Initial probability vector PI:\n");
-    for (size_t i = 0; i < mLogPi.getNumElements(); i++) {
-        printf("%+6.2f ", mLogPi.at(i));
+    for (uint32_t i = 0; i < mLogPi->size(); i++) {
+        printf("%+6.2f ", mLogPi->at(i));
     }
     printf("\n");
 }
 
-Array1D<std::size_t>
+std::vector<unsigned int>
 HiddenMarkovModel::translateObservation(const std::string &strObservation)
 {
-    Array1D<std::size_t> arrObservation;
+    vector<unsigned> observation;
 
     stringstream ss(strObservation);
     string word;
 
     while (ss >> word) {
-        arrObservation.push(mOutputToIndexMap[word]);
+        observation.push_back(mOutputToIndexMap[word]);
     }
 
-    return arrObservation;
+    return observation;
+}
+
+void HiddenMarkovModel::loadSymbols(const std::string &fileTransitions,
+                                    const std::string &fileEmissions)
+{
+    ifstream ifs(fileTransitions);
+    uint32_t iState = 0;
+    float probability;
+    string fromState;
+    string toState;
+
+    // Load states
+    while (ifs.good()) {
+        ifs >> fromState;
+        ifs >> toState;
+        ifs >> probability;
+
+        if (fromState != "#") {
+            if (mStateToIndexMap.count(fromState) == 0) {
+                mStateToIndexMap[fromState] = iState;
+                mIndexToStateMap[iState++] = fromState;
+            }
+        }
+
+        if (mStateToIndexMap.count(toState) == 0) {
+            mStateToIndexMap[toState] = iState;
+            mIndexToStateMap[iState++] = toState;
+        }
+    }
+
+    ifs.close();
+    ifs.open(fileEmissions);
+    string output;
+    uint32_t iOutput = 0;
+
+    // Load output symbols
+    while (ifs.good()) {
+        ifs >> fromState;
+        ifs >> output;
+        ifs >> probability;
+
+        if (mStateToIndexMap.count(fromState) == 0) {
+            mStateToIndexMap[fromState] = iState;
+            mIndexToStateMap[iState++] = fromState;
+        }
+
+        if (mOutputToIndexMap.count(output) == 0) {
+            mOutputToIndexMap[output] = iOutput;
+            mIndexToOutputMap[iOutput++] = output;
+        }
+    }
+}
+
+std::string
+HiddenMarkovModel::translateStateSequence(const std::vector<uint32_t> &sequence)
+{
+    string strSequence;
+    for (auto sIndex: sequence) {
+        strSequence += mIndexToStateMap[sIndex] + " ";
+    }
+
+    return strSequence;
 }
 
 }
