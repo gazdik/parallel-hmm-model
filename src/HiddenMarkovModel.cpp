@@ -11,6 +11,7 @@
 #include <cmath>
 #include <sstream>
 #include <vector>
+#include <random>
 #include "HiddenMarkovModel.h"
 
 using namespace std;
@@ -31,6 +32,16 @@ HiddenMarkovModel::HiddenMarkovModel(const std::string &fileTransitions,
 
     loadModel(fileTransitions, fileEmissions);
 }
+
+HiddenMarkovModel::HiddenMarkovModel(size_t numStates, size_t numSymbols)
+{
+    mLogA = new Array2D<float>((uint32_t) numStates, (uint32_t) numStates);
+    mLogB = new Array2D<float>((uint32_t) numStates, (uint32_t) numSymbols);
+    mLogPi = new Array1D<float>((uint32_t) numStates);
+
+    randomInit();
+}
+
 
 uint32_t HiddenMarkovModel::getNumStates() const
 {
@@ -197,6 +208,50 @@ HiddenMarkovModel::translateStateSequence(const std::vector<uint32_t> &sequence)
     }
 
     return strSequence;
+}
+
+void HiddenMarkovModel::randomInit()
+{
+    default_random_engine generator(56464646565566);
+    uniform_real_distribution<float> distribution;
+
+    float sum = 0.0f;
+    float p;
+    for (uint32_t i = 0; i < mLogPi->size(); i++) {
+        p = distribution(generator);
+        sum += p;
+        mLogPi->at(i) = p;
+    }
+    for (uint32_t i = 0; i < mLogPi->size(); i++) {
+        mLogPi->at(i) /= sum;
+        mLogPi->at(i) = log(mLogPi->at(i));
+    }
+
+    for (uint32_t i = 0; i < mLogA->getNumRows(); i++) {
+        sum = 0.0f;
+        for (uint32_t j = 0; j < mLogA->getNumCols(); j++) {
+            p = distribution(generator);
+            sum += p;
+            mLogA->at(i, j) = p;
+        }
+        for (uint32_t j = 0; j < mLogA->getNumCols(); j++) {
+            mLogA->at(i, j) /= sum;
+            mLogA->at(i, j) = log(mLogA->at(i, j));
+        }
+    }
+
+    for (uint32_t i = 0; i < mLogB->getNumRows(); i++) {
+        sum = 0.0f;
+        for (uint32_t j = 0; j < mLogB->getNumCols(); j++) {
+            p = distribution(generator);
+            sum += p;
+            mLogB->at(i, j) = p;
+        }
+        for (uint32_t j = 0; j < mLogB->getNumCols(); j++) {
+            mLogB->at(i, j) /= sum;
+            mLogB->at(i, j) = log(mLogB->at(i, j));
+        }
+    }
 }
 
 }

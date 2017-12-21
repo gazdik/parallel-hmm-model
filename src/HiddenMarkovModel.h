@@ -26,6 +26,7 @@ class HiddenMarkovModel
 public:
     HiddenMarkovModel(const std::string &fileTransitions,
                       const std::string &fileEmissions);
+    HiddenMarkovModel(size_t numStates, size_t numSymbols);
 
     std::uint32_t getNumStates() const;
 
@@ -93,6 +94,8 @@ private:
 
     void loadModel(const std::string &fileTransitions,
                    const std::string &fileEmissions);
+
+    void randomInit();
 
     void loadSymbols(const std::string &fileTransitions,
                      const std::string &fileEmissions);

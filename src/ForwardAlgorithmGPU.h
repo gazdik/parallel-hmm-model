@@ -21,7 +21,8 @@ class ForwardAlgorithmGPU : public ForwardAlgorithm,
                             public GPUImplementation
 {
 public:
-    ForwardAlgorithmGPU(HiddenMarkovModel &hmm, cl::Context &context,
+    ForwardAlgorithmGPU(HiddenMarkovModel &hmm, uint32_t maxObservationLength,
+                        cl::Context &context,
                         std::vector<cl::Device> &devices);
 
     using ForwardAlgorithm::evaluate;
@@ -37,7 +38,7 @@ private:
 
 private:
     cl::Kernel mKernelRecursionStep;
-    cl::Kernel mKernelInit;
+    cl::Kernel mKernelInitAlpha;
     cl::Kernel mKernelTermination;
 
     cl::Buffer mLogABuffer;

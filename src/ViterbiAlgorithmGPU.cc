@@ -165,7 +165,6 @@ ViterbiAlgorithmGPU::evaluate(std::vector<std::uint32_t> &observation)
 {
     cl_int err;
     uint32_t obsLength = (uint32_t) observation.size();
-    cout << "Observation length: " << obsLength << endl;
 
     // 1. Initialization
     mKernelInit.setArg(6, observation.front());
@@ -174,51 +173,16 @@ ViterbiAlgorithmGPU::evaluate(std::vector<std::uint32_t> &observation)
                                    cl::NDRange(mInitLocalWorkSize)
     );
 
-
-
     // 2. Recursion
     for (uint32_t t = 1; t < obsLength; t++) {
         mKernelRecursionStep.setArg(9, observation[t]);
         mKernelRecursionStep.setArg(10, t);
 
-        err = mCmdQueue.enqueueNDRangeKernel(mKernelRecursionStep, 0,
-//                                       cl::NDRange(mHmm.getNumStates()),
-//                                       cl::NDRange(1)
+        mCmdQueue.enqueueNDRangeKernel(mKernelRecursionStep, 0,
                                        cl::NDRange(mRecursionGlobalWorkSize),
                                        cl::NDRange(mRecursionLocalWorkSize)
         );
-        clCheckError(err, "enqueueNDRangeKernel mKernelRecursionStep");
     }
-
-    // TODO delete
-//    float *V = new float[mHmm.getNumStates() * mMaxObservationLength];
-//    mCmdQueue.enqueueReadBuffer(mViterbiBuffer, CL_TRUE, 0,
-//                                mHmm.getNumStates() * mMaxObservationLength * sizeof(float),
-//                                V
-//    );
-//    cout << "Viterbi matrix: " << endl;
-//    cout << "------------------" << endl;
-//    for (int t = 0; t < obsLength; t++) {
-//        for (int i = 0; i < mHmm.getNumStates(); i++) {
-//            cout << V[t * mHmm.getNumStates() + i] << " ";
-//        }
-//        cout << endl;
-//    }
-//    cout << "------------------" << endl;
-
-//    uint32_t *backtrace = new uint32_t[obsLength * mHmm.getNumStates()];
-//    mCmdQueue.enqueueReadBuffer(mBacktraceBuffer, CL_TRUE, 0,
-//                                obsLength * mHmm.getNumStates() * sizeof(uint32_t),
-//                                backtrace
-//    );
-//    cout << "Backtrace matrix: " << endl;
-//    for (int i = 0; i < obsLength - 1; i++) {
-//        for (int j = 0; j < mHmm.getNumStates(); j++) {
-//            cout << backtrace[i * mHmm.getNumStates() + j] << " ";
-//        }
-//        cout << endl;
-//    }
-//    cout << "------------------" << endl;
 
     // 3. Termination
     mKernelTermination.setArg(5, obsLength);

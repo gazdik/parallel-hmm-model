@@ -71,22 +71,22 @@ ViterbiAlgorithmCPU::evaluate(std::vector<std::uint32_t> &o)
 //    }
 //    printf("\n");
 //
-    // Print Viterbi matrix
-    printf("Viterbi matrix\n");
-    for (uint32_t j = 0; j < T; j++) {
-        for (uint32_t i = 0; i < N; i++) {
-            printf("%+5f ", viterbi.at(i, j));
-        }
-        printf("\n");
-    }
+//    // Print Viterbi matrix
+//    printf("Viterbi matrix\n");
+//    for (uint32_t j = 0; j < T; j++) {
+//        for (uint32_t i = 0; i < N; i++) {
+//            printf("%+5f ", viterbi.at(i, j));
+//        }
+//        printf("\n");
+//    }
 
-    printf("Backtrace matrix\n");
-    for (uint32_t j = 0; j < T - 1; j++) {
-        for (uint32_t i = 0; i < N; i++) {
-            printf("%3d ", backtrace.at(i, j));
-        }
-        printf("\n");
-    }
+//    printf("Backtrace matrix\n");
+//    for (uint32_t j = 0; j < T - 1; j++) {
+//        for (uint32_t i = 0; i < N; i++) {
+//            printf("%3d ", backtrace.at(i, j));
+//        }
+//        printf("\n");
+//    }
 //    printf("The most likely path:\n");
 //    for (uint32_t i = 0; i < T; i++) {
 //        printf("%3d ", path.at(i));

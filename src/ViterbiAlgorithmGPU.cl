@@ -88,9 +88,7 @@ __kernel void viterbi_recursion_step(__global float *logA,
     uint iState = groupId;
 
     maxValue[localId] = -INFINITY;
-//    printf("GroupID: %d, LocalID: %d, maxValue: %f, maxValueAdr: %d\n", groupId, localId, maxValue[localId], &maxValue[localId]);
-    barrier(CLK_LOCAL_MEM_FENCE);
-    // Recursion
+//    barrier(CLK_LOCAL_MEM_FENCE);
 
     float mValue = -INFINITY;
     int mInd = -1;
@@ -103,14 +101,8 @@ __kernel void viterbi_recursion_step(__global float *logA,
         }
     }
     maxValue[localId] = mValue;
-//    maxValue[localId] = -INFINITY;
     maxInd[localId] = mInd;
     barrier(CLK_LOCAL_MEM_FENCE);
-
-//    printf("||GroupID: %d, LocalID: %d, maxValue: %f, maxValueAdr: %d, maxIndAdr: %d\n", groupId, localId, maxValue[localId], &maxValue[localId], &maxInd[localId]);
-
-    barrier(CLK_LOCAL_MEM_FENCE);
-
 
     local_maximum(maxValue, maxInd);
 

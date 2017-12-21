@@ -13,7 +13,7 @@ using namespace std;
 namespace hmm
 {
 
-vector<string> sourceFiles
+vector<string> sourceFilesForward
         {
                 "src/ForwardAlgorithmGPU.cl"
         };
@@ -143,7 +143,7 @@ ForwardAlgorithmGPU::ForwardAlgorithmGPU(HiddenMarkovModel &hmm,
         GPUImplementation(context, devices),
         mMaxObservationLength{maxObservationLength}
 {
-    compileProgram(sourceFiles, "-w -Werror");
+    compileProgram(sourceFilesForward, "-w -Werror");
     createBuffers();
     initKernels();
 
@@ -158,7 +158,6 @@ ForwardAlgorithmGPU::evaluate(std::vector<std::uint32_t> &observation)
 {
     cl_int err;
     uint32_t obsLength = (uint32_t) observation.size();
-    cout << "Observation length: " << obsLength << endl;
 
     // 1. Initialization
     mKernelInitAlpha.setArg(6, observation.front());
@@ -171,12 +170,10 @@ ForwardAlgorithmGPU::evaluate(std::vector<std::uint32_t> &observation)
 
     // 2. Recursion
     for (uint32_t t = 1; t < obsLength; t++) {
-        mKernelRecursionStep.setArg(9, observation[t]);
-        mKernelRecursionStep.setArg(10, t);
+        mKernelRecursionStep.setArg(7, observation[t]);
+        mKernelRecursionStep.setArg(8, t);
 
         err = mCmdQueue.enqueueNDRangeKernel(mKernelRecursionStep, 0,
-//                                       cl::NDRange(mHmm.getNumStates()),
-//                                       cl::NDRange(1)
                                              cl::NDRange(
                                                      mRecursionGlobalWorkSize),
                                              cl::NDRange(
@@ -187,11 +184,12 @@ ForwardAlgorithmGPU::evaluate(std::vector<std::uint32_t> &observation)
 
 
     // 3. Termination
-    mKernelTermination.setArg(5, obsLength);
-    mCmdQueue.enqueueNDRangeKernel(mKernelTermination, 0,
+    mKernelTermination.setArg(4, obsLength);
+    err = mCmdQueue.enqueueNDRangeKernel(mKernelTermination, 0,
                                    cl::NDRange(mRecursionGlobalWorkSize),
                                    cl::NDRange(mRecursionLocalWorkSize)
     );
+    clCheckError(err, "enqueueNDRangeKernel mKernelTermination");
 
     // Get result
     float result = 0;
