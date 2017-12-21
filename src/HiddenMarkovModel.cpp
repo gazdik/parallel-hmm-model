@@ -60,6 +60,10 @@ void HiddenMarkovModel::loadModel(
         ifs >> probability;
         probability = convertToLog(probability);
 
+        if (probability != probability) {
+            cerr << "Probability is equal to NAN" << endl;
+        }
+
         // Set an initial state probability
         if (fromState == "#") {
             mLogPi->at(mStateToIndexMap[toState]) = probability;
@@ -82,11 +86,14 @@ void HiddenMarkovModel::loadModel(
         ifs >> output;
         ifs >> probability;
         probability = convertToLog(probability);
+        if (probability != probability) {
+            cerr << "Probability is equal to NAN" << endl;
+        }
 
         mLogB->at(mStateToIndexMap[state], mOutputToIndexMap[output]) = probability;
     }
 
-    debugPrint();
+//    debugPrint();
 }
 
 void HiddenMarkovModel::debugPrint()

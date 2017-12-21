@@ -39,14 +39,17 @@ ViterbiAlgorithmCPU::evaluate(std::vector<std::uint32_t> &o)
     for (uint32_t t = 1; t < T; t++) {
         for (uint32_t j = 0; j < N; j++) {
             for (uint32_t i = 0; i < N; i++) {
-                p = viterbi.at(i, t - 1) + mHmm.mLogA->at(i, j) + mHmm.mLogB->at(j, o.at(t));
+//                p = viterbi.at(i, t - 1) + mHmm.mLogA->at(i, j) + mHmm.mLogB->at(j, o.at(t));
+                p = viterbi.at(i, t - 1) + mHmm.mLogA->at(i, j);
                 if (p > viterbi.at(j, t)) {
                     viterbi.at(j, t) = p;
                     backtrace.at(j, t - 1) = i;
                 }
             }
+            viterbi.at(j, t) += mHmm.mLogB->at(j, o.at(t));
         }
     }
+
     // Termination
     float max = -INFINITY;
     for (uint32_t i = 0; i < N; i++) {
@@ -68,22 +71,22 @@ ViterbiAlgorithmCPU::evaluate(std::vector<std::uint32_t> &o)
 //    }
 //    printf("\n");
 //
-//    // Print Viterbi matrix
-//    printf("Viterbi matrix\n");
-//    for (uint32_t i = 0; i < N; i++) {
-//        for (uint32_t j = 0; j < T; j++) {
-//            printf("%+5f ", viterbi.at(i, j));
-//        }
-//        printf("\n");
-//    }
-//
-//    printf("Backtrace matrix\n");
-//    for (uint32_t i = 0; i < N; i++) {
-//        for (uint32_t j = 0; j < T - 1; j++) {
-//            printf("%3d ", backtrace.at(i, j));
-//        }
-//        printf("\n");
-//    }
+    // Print Viterbi matrix
+    printf("Viterbi matrix\n");
+    for (uint32_t j = 0; j < T; j++) {
+        for (uint32_t i = 0; i < N; i++) {
+            printf("%+5f ", viterbi.at(i, j));
+        }
+        printf("\n");
+    }
+
+    printf("Backtrace matrix\n");
+    for (uint32_t j = 0; j < T - 1; j++) {
+        for (uint32_t i = 0; i < N; i++) {
+            printf("%3d ", backtrace.at(i, j));
+        }
+        printf("\n");
+    }
 //    printf("The most likely path:\n");
 //    for (uint32_t i = 0; i < T; i++) {
 //        printf("%3d ", path.at(i));

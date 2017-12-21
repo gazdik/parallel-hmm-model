@@ -16,10 +16,18 @@ namespace hmm
 class GPUImplementation
 {
 public:
-    GPUImplementation(cl::Context &context);
+    GPUImplementation(cl::Context &context, std::vector<cl::Device> &devices);
 
-private:
+protected:
+    virtual void compileProgram(const std::vector<std::string> &filenames,
+                                    const char *buildOptions = "");
+
+protected:
     cl::Context &mContext;
+    std::vector<cl::Device> &mDevices;
+    cl::CommandQueue mCmdQueue;
+
+    cl::Program mProgram;
 };
 
 }

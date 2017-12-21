@@ -11,8 +11,9 @@ namespace hmm
 {
 
 ForwardAlgorithmGPU::ForwardAlgorithmGPU(HiddenMarkovModel &hmm,
-                                         cl::Context &context)
-        : ForwardAlgorithm(hmm), GPUImplementation(context)
+                                         cl::Context &context,
+                                         std::vector<cl::Device> &devices)
+        : ForwardAlgorithm(hmm), GPUImplementation(context, devices)
 {}
 
 } // namespace hmm

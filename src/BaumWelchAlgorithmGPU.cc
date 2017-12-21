@@ -11,8 +11,9 @@ namespace hmm
 {
 
 BaumWelchAlgorithmGPU::BaumWelchAlgorithmGPU(HiddenMarkovModel &hmm,
-                                             cl::Context &context)
-        : BaumWelchAlgorithm(hmm), GPUImplementation(context)
+                                             cl::Context &context,
+                                             std::vector<cl::Device> &devices)
+        : BaumWelchAlgorithm(hmm), GPUImplementation(context, devices)
 {}
 
 } // namespace hmm

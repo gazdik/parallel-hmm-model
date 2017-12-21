@@ -21,11 +21,14 @@ class ForwardAlgorithmGPU : public ForwardAlgorithm,
                             public GPUImplementation
 {
 public:
-    ForwardAlgorithmGPU(HiddenMarkovModel &hmm, cl::Context &context);
+    ForwardAlgorithmGPU(HiddenMarkovModel &hmm, cl::Context &context,
+                        std::vector<cl::Device> &devices);
+
+public:
 
     using ForwardAlgorithm::evaluate;
 };
 
-}
+} // namespace hmm
 
 #endif //GMU_FORWARDALGORITHMGPU_H

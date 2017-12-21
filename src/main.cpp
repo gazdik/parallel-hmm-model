@@ -11,7 +11,6 @@
 #include <fstream>
 #include <iostream>
 
-
 using namespace hmm;
 using namespace std;
 

@@ -21,11 +21,14 @@ class BaumWelchAlgorithmGPU : public BaumWelchAlgorithm,
                               public GPUImplementation
 {
 public:
-    BaumWelchAlgorithmGPU(HiddenMarkovModel &hmm, cl::Context &context);
+    BaumWelchAlgorithmGPU(HiddenMarkovModel &hmm, cl::Context &context,
+                          std::vector<cl::Device> &devices);
+
+public:
 
 };
 
-}
+} // namespace hmm
 
 
 #endif //GMU_BAUMWELCHALGORITHMGPU_H
