@@ -56,7 +56,7 @@ void local_maximum(__local float *maxValue,
     int idx;
     float m1, m2, m3;
 
-    for (int s = (localSize >> 1); s > 0; s >>= 1) {
+    for (int s = (localSize >> 1); s > 32; s >>= 1) {
         if (localId < s) {
             m1 = maxValue[localId];
             m2 = maxValue[localId + s];
@@ -66,6 +66,50 @@ void local_maximum(__local float *maxValue,
             maxInd[localId] = maxInd[idx];
         }
         barrier(CLK_LOCAL_MEM_FENCE);
+    }
+
+    if (localId < 32) {
+        m1 = maxValue[localId];
+        m2 = maxValue[localId + 32];
+        m3 = (m1 >= m2) ? m1 : m2;
+        idx = (m1 >= m2) ? localId : localId + 32;
+        maxValue[localId] = m3;
+        maxInd[localId] = maxInd[idx];
+
+        m1 = maxValue[localId];
+        m2 = maxValue[localId + 16];
+        m3 = (m1 >= m2) ? m1 : m2;
+        idx = (m1 >= m2) ? localId : localId + 16;
+        maxValue[localId] = m3;
+        maxInd[localId] = maxInd[idx];
+
+        m1 = maxValue[localId];
+        m2 = maxValue[localId + 8];
+        m3 = (m1 >= m2) ? m1 : m2;
+        idx = (m1 >= m2) ? localId : localId + 8;
+        maxValue[localId] = m3;
+        maxInd[localId] = maxInd[idx];
+
+        m1 = maxValue[localId];
+        m2 = maxValue[localId + 4];
+        m3 = (m1 >= m2) ? m1 : m2;
+        idx = (m1 >= m2) ? localId : localId + 4;
+        maxValue[localId] = m3;
+        maxInd[localId] = maxInd[idx];
+
+        m1 = maxValue[localId];
+        m2 = maxValue[localId + 2];
+        m3 = (m1 >= m2) ? m1 : m2;
+        idx = (m1 >= m2) ? localId : localId + 2;
+        maxValue[localId] = m3;
+        maxInd[localId] = maxInd[idx];
+
+        m1 = maxValue[localId];
+        m2 = maxValue[localId + 1];
+        m3 = (m1 >= m2) ? m1 : m2;
+        idx = (m1 >= m2) ? localId : localId + 1;
+        maxValue[localId] = m3;
+        maxInd[localId] = maxInd[idx];
     }
 }
 
