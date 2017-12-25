@@ -212,46 +212,35 @@ HiddenMarkovModel::translateStateSequence(const std::vector<uint32_t> &sequence)
 
 void HiddenMarkovModel::randomInit()
 {
+    cout << "Initialiazing HMM..." << endl;
+
     default_random_engine generator(56464646565566);
     uniform_real_distribution<float> distribution;
 
-    float sum = 0.0f;
     float p;
+    float sum = mLogPi->size() * 0.5f;
     for (uint32_t i = 0; i < mLogPi->size(); i++) {
         p = distribution(generator);
-        sum += p;
-        mLogPi->at(i) = p;
-    }
-    for (uint32_t i = 0; i < mLogPi->size(); i++) {
-        mLogPi->at(i) /= sum;
-        mLogPi->at(i) = log(mLogPi->at(i));
+        mLogPi->at(i) = log(p / sum);
     }
 
+    sum = mLogA->getNumCols() * 0.5f;
     for (uint32_t i = 0; i < mLogA->getNumRows(); i++) {
-        sum = 0.0f;
         for (uint32_t j = 0; j < mLogA->getNumCols(); j++) {
             p = distribution(generator);
-            sum += p;
-            mLogA->at(i, j) = p;
-        }
-        for (uint32_t j = 0; j < mLogA->getNumCols(); j++) {
-            mLogA->at(i, j) /= sum;
-            mLogA->at(i, j) = log(mLogA->at(i, j));
+            mLogA->at(i, j) = log(p/sum);
         }
     }
 
+    sum = mLogB->getNumCols() * 0.5f;
     for (uint32_t i = 0; i < mLogB->getNumRows(); i++) {
-        sum = 0.0f;
         for (uint32_t j = 0; j < mLogB->getNumCols(); j++) {
             p = distribution(generator);
-            sum += p;
-            mLogB->at(i, j) = p;
-        }
-        for (uint32_t j = 0; j < mLogB->getNumCols(); j++) {
-            mLogB->at(i, j) /= sum;
-            mLogB->at(i, j) = log(mLogB->at(i, j));
+            mLogB->at(i, j) = log(p / sum);
         }
     }
+
+    cout << "HMM has been initialized" << endl;
 }
 
 }

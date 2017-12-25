@@ -24,7 +24,6 @@ public:
     std::string evaluate(const std::string &observation);
     virtual std::vector<std::uint32_t> evaluate(
             std::vector<std::uint32_t> &observation) {};
-
 };
 
 /**
@@ -38,6 +37,22 @@ public:
     using ViterbiAlgorithm::evaluate;
     virtual std::vector<std::uint32_t>
     evaluate(std::vector<std::uint32_t> &observation) override;
+
+    virtual void printStatistics() override;
+
+private:
+
+    // Profiling
+    double mStartTime = 0.0;
+    double mEndTime = 0.0;
+    double mInitializationStartTime = 0.0;
+    double mInitializationEndTime = 0.0;
+    double mRecursionStartTime = 0.0;
+    double mRecursionEndTime = 0.0;
+    double mBacktraceStartTime = 0.0;
+    double mBacktraceEndTime = 0.0;
+    double mTerminationStartTime = 0.0;
+    double mTerminationEndTime = 0.0;
 };
 
 } // namespace hmm

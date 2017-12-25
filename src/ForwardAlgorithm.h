@@ -37,12 +37,27 @@ public:
     using ForwardAlgorithm::evaluate;
     virtual float evaluate(std::vector<uint32_t> &observation) override;
     virtual Array2D<float> getAlpha(std::vector<uint32_t> &observation);
+
+    virtual void printStatistics() override;
+
     virtual Array2D<float> getBeta(std::vector<uint32_t> &observation);
 
 private:
     float logAdd(float x, float y);
     virtual float backward(std::vector<uint32_t> &observation);
     virtual float forward(std::vector<uint32_t> &observation);
+
+private:
+
+    // Profiling
+    double mStartTime = 0.0;
+    double mEndTime = 0.0;
+    double mInitializationStartTime = 0.0;
+    double mInitializationEndTime = 0.0;
+    double mRecursionStartTime = 0.0;
+    double mRecursionEndTime = 0.0;
+    double mTerminationStartTime = 0.0;
+    double mTerminationEndTime = 0.0;
 };
 
 } // namespace hmm

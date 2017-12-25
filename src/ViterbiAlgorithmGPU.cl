@@ -60,7 +60,6 @@ void local_maximum(__local float *maxValue,
         if (localId < s) {
             m1 = maxValue[localId];
             m2 = maxValue[localId + s];
-//            printf("ID %d, s: %d, m1: %f, m2: %f\n", localId, s, m1, m2);
             m3 = (m1 >= m2) ? m1 : m2;
             idx = (m1 >= m2) ? localId : localId + s;
             maxValue[localId] = m3;
@@ -88,7 +87,6 @@ __kernel void viterbi_recursion_step(__global float *logA,
     uint iState = groupId;
 
     maxValue[localId] = -INFINITY;
-//    barrier(CLK_LOCAL_MEM_FENCE);
 
     float mValue = -INFINITY;
     int mInd = -1;
@@ -186,11 +184,9 @@ __kernel void viterbi_recursion_step_seq(__global float *logA,
         value = V[(t - 1) * N + i] + logA[i * N + iState];
         if (value > mValue) {
             mValue = value;
-//            printf("for | t: %d, ID: %d, MaxValue: %f, Max index: %d\n", t, groupId, mValue, i);
             mInd = i;
         }
     }
-//    printf("res | t: %d, ID: %d, MaxValue: %f, MaxInd: %d\n", t, groupId, mValue, mInd);
 
     // Copy results from local to global memory
     V[t * N + iState] = mValue + logB[iState * M + o];

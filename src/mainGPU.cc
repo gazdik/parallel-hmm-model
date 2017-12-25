@@ -14,13 +14,57 @@
 #include <CL/cl.hpp>
 #include <cstdlib>
 #include <random>
+#include <getopt.h>
 
 using namespace hmm;
 using namespace std;
 
+static const char *helpMsg =
+        "Usage hmm -s numOfStates -o numOfOutputs [-p platform] [-d device] [-l obsLength] [-O numOfObservations]";
+
 int main(int argc, char *argv[])
 {
+    // Parse program arguments
+    int opt;
+    int numStates = -1,
+        numOutputs = -1;
+    int platformIndex = 0,
+        deviceIndex = 0;
+    uint32_t obsLength = 30;
+    uint32_t numObservations = 1;
+    while((opt = getopt(argc, argv, "s:o:p:d:l:O:h")) != -1) {
+        switch (opt) {
+            case 's':
+                numStates = atoi(optarg);
+                break;
+            case 'o':
+                numOutputs = atoi(optarg);
+                break;
+            case 'p':
+                platformIndex = atoi(optarg);
+                break;
+            case 'd':
+                deviceIndex = atoi(optarg);
+                break;
+            case 'h':
+                cout << helpMsg << endl;
+                exit(EXIT_SUCCESS);
+            case 'l':
+                obsLength = (uint32_t) atoi(optarg);
+                break;
+            case 'O':
+                numObservations = (uint32_t) atoi(optarg);
+                break;
+            default:
+                cerr << "Wrong program arguments\n\n" << helpMsg << endl;
+                exit(EXIT_FAILURE);
+        }
+    }
 
+    if (numStates == -1 || numOutputs == -1) {
+        cerr << "Missing program options\n\n" << helpMsg << endl;
+        exit(EXIT_FAILURE);
+    }
 
     cl_int err;
     vector<cl::Platform> platforms;
@@ -49,32 +93,21 @@ int main(int argc, char *argv[])
         platform_devices.clear();
     }
 
-    // Select OpenCL device
+    // Select an OpenCL device
     cl::Device device;
-    platforms.at((unsigned long) stoi(argv[1])).getDevices(CL_DEVICE_TYPE_ALL, &platform_devices);
-    device = platform_devices.at((unsigned long) stoi(argv[2]));
+    platforms.at((unsigned long) platformIndex).getDevices(CL_DEVICE_TYPE_ALL, &platform_devices);
+    device = platform_devices.at((unsigned long) deviceIndex);
 
     // Print the name of selected device
     printf("Selected device: %s\n", device.getInfo<CL_DEVICE_NAME>(&err).c_str());
     clCheckError(err, "cl::Device::getInfo<CL_DEVICE_NAME>");
     platforms.clear();
 
-    // Create context
+    // Create a context
     cl::Context context(platform_devices, NULL, NULL, NULL, &err);
     clCheckError(err, "cl::Context");
 
-    // Test the number of parameters
-    if (argc < 5) {
-        cerr << "Wrong number of parameters." << endl;
-        return EXIT_FAILURE;
-    }
-
-    uint32_t obsLength = 30;
-    uint32_t numObservations = 1;
-
-    HiddenMarkovModel hmm((size_t) stoi(argv[3]), (size_t) stoi(argv[4]));
-    ViterbiAlgorithmCPU viterbiCPU(hmm);
-    ViterbiAlgorithmGPU viterbiGPU(hmm, obsLength, context, platform_devices);
+    HiddenMarkovModel hmm((size_t) numStates, (size_t) numOutputs);
 
     /*
      * Generate random observations
@@ -88,90 +121,42 @@ int main(int argc, char *argv[])
         }
     }
 
-    std::vector<uint32_t> vitPath;
 
-    double viterbiCPUStart = getTime();
-    for (auto &o: observations) {
-        vitPath = viterbiCPU.evaluate(o);
-    }
-    double viterbiCPUEnd = getTime();
-
-    double viterbiGPUStart = getTime();
-    for (auto &o: observations) {
-        vitPath = viterbiGPU.evaluate(o);
-    }
-    double viterbiGPUEnd = getTime();
-
-//    for (auto &o: observations) {
-//        printf("--------------------------------------------------\n");
-//        printf("Observation: ");
-//        for (auto i: o) {
-//            printf("%5d ", i);
-//        }
-//        printf("\n");
-//
-//        vitPath = viterbiGPU.evaluate(o);
-//
-//        printf("Vit. GPU:    ");
-//        for (auto i: vitPath) {
-//            printf("%5d ", i);
-//        }
-//        printf("\n");
-//
-//        vitPath = viterbiCPU.evaluate(o);
-//
-//        printf("Vit. CPU:    ");
-//        for (auto i: vitPath) {
-//            printf("%5d ", i);
-//        }
-//        printf("\n");
-//    }
-
+    /*
+     * Forward Algorithm
+     */
+    float likelihood;
     ForwardAlgorithmCPU forwardCPU(hmm);
     ForwardAlgorithmGPU forwardGPU(hmm, obsLength, context, platform_devices);
 
-    double forwardCPUStart = getTime();
-    float likelihood;
+    printf("**********  Forward Algorithm  **********\n");
+    for (size_t i = 0; i < observations.size(); i++) {
+        printf("----------    Observation %zu    ----------\n", i);
 
-    for (auto &o: observations) {
-        likelihood = forwardCPU.evaluate(o);
+        likelihood = forwardGPU.evaluate(observations[i]);
+        forwardGPU.printStatistics();
+
+//        likelihood = forwardCPU.evaluate(observations[i]);
+//        forwardCPU.printStatistics();
     }
-    double forwardCPUEnd = getTime();
 
-    double forwardGPUStart = getTime();
-    for (auto &o: observations) {
-        likelihood = forwardGPU.evaluate(o);
+    /*
+     * Viterbi algorithm
+     */
+    std::vector<uint32_t> vitPath;
+    ViterbiAlgorithmCPU viterbiCPU(hmm);
+    ViterbiAlgorithmGPU viterbiGPU(hmm, obsLength, context, platform_devices);
+
+    printf("**********  Viterbi Algorithm  **********\n");
+    for (size_t i = 0; i < observations.size(); i++) {
+        printf("----------    Observation %zu    ----------\n", i);
+
+        vitPath = viterbiGPU.evaluate(observations[i]);
+        viterbiGPU.printStatistics();
+
+//        vitPath = viterbiCPU.evaluate(observations[i]);
+//        viterbiCPU.printStatistics();
     }
-    double forwardGPUEnd = getTime();
 
-//    for (auto &o: observations) {
-//        printf("--------------------------------------------------\n");
-//        printf("Observation: ");
-//        for (auto i: o) {
-//            printf("%5d ", i);
-//        }
-//        printf("\n");
-//
-//        likelihood = forwardGPU.evaluate(o);
-//        printf("Likelihood GPU: %f\n", likelihood);
-//
-//        likelihood = forwardCPU.evaluate(o);
-//        printf("Likelihood CPU: %f\n", likelihood);
-//
-//    }
-
-    // Print results
-    printf("Forward Algorithm: \n");
-    printf("  Timers: cpu:%.3fms gpu:%.3fms\n",
-           (forwardCPUEnd - forwardCPUStart) * 1000,
-           (forwardGPUEnd - forwardGPUStart) * 1000
-    );
-
-    printf("Viterbi Algorithm: \n");
-    printf("  Timers: cpu:%.3fms gpu:%.3fms\n",
-           (viterbiCPUEnd - viterbiCPUStart) * 1000,
-           (viterbiGPUEnd - viterbiGPUStart) * 1000
-    );
-
-    return EXIT_SUCCESS;
+    exit(EXIT_SUCCESS);
 }

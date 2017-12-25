@@ -6,6 +6,7 @@
  */
 
 #include "ViterbiAlgorithm.h"
+#include "oclHelpers.h"
 
 using namespace std;
 
@@ -23,6 +24,8 @@ ViterbiAlgorithmCPU::ViterbiAlgorithmCPU(HiddenMarkovModel &hmm)
 std::vector<std::uint32_t>
 ViterbiAlgorithmCPU::evaluate(std::vector<std::uint32_t> &o)
 {
+    mStartTime = getTime();
+
     uint32_t T = (uint32_t) o.size();
     uint32_t N = mHmm.getNumStates();
     Array2D<float> viterbi(N, T);
@@ -32,14 +35,17 @@ ViterbiAlgorithmCPU::evaluate(std::vector<std::uint32_t> &o)
     float p;
 
     // Initialization
+    mInitializationStartTime = getTime();
     for (uint32_t i = 0; i < N; i++) {
         viterbi.at(i, 0) = mHmm.mLogPi->at(i) + mHmm.mLogB->at(i, o.at(0));
     }
+    mInitializationEndTime = getTime();
+
     // Recursion
+    mRecursionStartTime = getTime();
     for (uint32_t t = 1; t < T; t++) {
         for (uint32_t j = 0; j < N; j++) {
             for (uint32_t i = 0; i < N; i++) {
-//                p = viterbi.at(i, t - 1) + mHmm.mLogA->at(i, j) + mHmm.mLogB->at(j, o.at(t));
                 p = viterbi.at(i, t - 1) + mHmm.mLogA->at(i, j);
                 if (p > viterbi.at(j, t)) {
                     viterbi.at(j, t) = p;
@@ -49,8 +55,10 @@ ViterbiAlgorithmCPU::evaluate(std::vector<std::uint32_t> &o)
             viterbi.at(j, t) += mHmm.mLogB->at(j, o.at(t));
         }
     }
+    mRecursionEndTime = getTime();
 
     // Termination
+    mTerminationStartTime = getTime();
     float max = -INFINITY;
     for (uint32_t i = 0; i < N; i++) {
         if (viterbi.at(i, T - 1) > max) {
@@ -58,42 +66,27 @@ ViterbiAlgorithmCPU::evaluate(std::vector<std::uint32_t> &o)
             max = viterbi.at(i, T - 1);
         }
     }
+    mTerminationEndTime = getTime();
 
     // Backtrace
+    mBacktraceStartTime = getTime();
     for (uint32_t i = T - 1; i > 0; i--) {
         path.at(i - 1) = backtrace.at(path.at(i), i - 1);
     }
+    mBacktraceEndTime = getTime();
 
-//    // Print Observation sequence
-//    printf("Observation sequence:\n");
-//    for (uint32_t i = 0; i < T; i++) {
-//        printf("%3d ", o.at(i));
-//    }
-//    printf("\n");
-//
-//    // Print Viterbi matrix
-//    printf("Viterbi matrix\n");
-//    for (uint32_t j = 0; j < T; j++) {
-//        for (uint32_t i = 0; i < N; i++) {
-//            printf("%+5f ", viterbi.at(i, j));
-//        }
-//        printf("\n");
-//    }
-
-//    printf("Backtrace matrix\n");
-//    for (uint32_t j = 0; j < T - 1; j++) {
-//        for (uint32_t i = 0; i < N; i++) {
-//            printf("%3d ", backtrace.at(i, j));
-//        }
-//        printf("\n");
-//    }
-//    printf("The most likely path:\n");
-//    for (uint32_t i = 0; i < T; i++) {
-//        printf("%3d ", path.at(i));
-//    }
-//    printf("\n");
-
+    mEndTime = getTime();
     return path;
+}
+
+void ViterbiAlgorithmCPU::printStatistics()
+{
+    printf("Viterbi Algorithm CPU\n");
+    printf("  Execution time: %.3fms\n", (mEndTime - mStartTime) * 1000);
+    printf("  Initialization step: %.3fms\n", (mInitializationEndTime - mInitializationStartTime) * 1000);
+    printf("  Recursion step: %.3fms\n", (mRecursionEndTime - mRecursionStartTime) * 1000);
+    printf("  Termination step: %.3fms\n", (mTerminationEndTime - mTerminationStartTime) * 1000);
+    printf("  Backtrace step: %.3fms\n", (mBacktraceEndTime - mBacktraceStartTime) * 1000);
 }
 
 string ViterbiAlgorithm::evaluate(const std::string &strObservation)

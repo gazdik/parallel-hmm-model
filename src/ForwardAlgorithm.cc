@@ -6,6 +6,7 @@
  */
 
 #include "ForwardAlgorithm.h"
+#include "oclHelpers.h"
 #include <cmath>
 #include <assert.h>
 #include <iostream>
@@ -31,14 +32,11 @@ ForwardAlgorithmCPU::ForwardAlgorithmCPU(hmm::HiddenMarkovModel &hmm)
 
 float ForwardAlgorithmCPU::evaluate(vector<uint32_t> &observation)
 {
-    float alpha = forward(observation);
-//    float beta = backward(observation);
+    mStartTime = getTime();
 
-//    if (!(alpha + beta < 1e-5)) {
-//        cerr << "ForwardAlgorithm: alpha and beta are different." << endl
-//             << "alpha: " << alpha << endl
-//             << "beta:  " << beta << endl;
-//    }
+    float alpha = forward(observation);
+
+    mEndTime = getTime();
 
     return alpha;
 }
@@ -51,12 +49,15 @@ Array2D<float> ForwardAlgorithmCPU::getAlpha(vector<uint32_t> &observation)
 
     // Initialiation
     // for each state
+    mInitializationStartTime = getTime();
     for (int i = 0; i < stateCount; i++) {
         mat.at(i, 0) = mHmm.mLogPi->at(i) + mHmm.mLogB->at(i, observation.at(0));
     }
+    mInitializationEndTime = getTime();
 
     float temp;
     // for each observation
+    mRecursionStartTime = getTime();
     for (uint32_t t = 1; t < observationCount; t++) {
         // for each HMM state
         for (uint32_t j = 0; j < mHmm.getNumStates(); j++) {
@@ -67,6 +68,7 @@ Array2D<float> ForwardAlgorithmCPU::getAlpha(vector<uint32_t> &observation)
             }
         }
     }
+    mRecursionEndTime = getTime();
 
     return mat;
 }
@@ -78,10 +80,12 @@ float ForwardAlgorithmCPU::forward(vector<uint32_t> &observation)
     uint32_t observationCount = (uint32_t) observation.size();
     uint32_t stateCount = mHmm.getNumStates();
 
+    mTerminationStartTime = getTime();
     float logLikelyhood = -INFINITY;
     for (int i = 0; i < stateCount; i++) {
         logLikelyhood = logAdd(logLikelyhood, alpha.at(i, observationCount - 1));
     }
+    mTerminationEndTime = getTime();
 
     return logLikelyhood;
 }
@@ -146,6 +150,15 @@ float ForwardAlgorithmCPU::logAdd(float x, float y)
     }
 
     return result;
+}
+
+void ForwardAlgorithmCPU::printStatistics()
+{
+    printf("Forward Algorithm CPU\n");
+    printf("  Execution time: %.3fms\n", (mEndTime - mStartTime) * 1000);
+    printf("  Initialization step: %.3fms\n", (mInitializationEndTime - mInitializationStartTime) * 1000);
+    printf("  Recursion step: %.3fms\n", (mRecursionEndTime - mRecursionStartTime) * 1000);
+    printf("  Termination step: %.3fms\n", (mTerminationEndTime - mTerminationStartTime) * 1000);
 }
 
 } // namespace hmm

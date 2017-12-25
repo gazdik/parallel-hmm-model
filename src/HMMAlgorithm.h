@@ -21,6 +21,8 @@ public:
     {
     }
 
+    virtual void printStatistics() {};
+
 protected:
     HiddenMarkovModel &mHmm;
 };

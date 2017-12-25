@@ -31,6 +31,10 @@ public:
     virtual float evaluate(
             std::vector<std::uint32_t> &observation);
 
+    virtual void printStatistics() override;
+
+protected:
+
 private:
 
     void createBuffers();
@@ -45,7 +49,6 @@ private:
     cl::Buffer mLogBBuffer;
     cl::Buffer mLogPiBuffer;
     cl::Buffer mAlphaBuffer;
-    cl::Buffer mBetaBuffer;
     cl::Buffer mLikelihoodBuffer;
     uint32_t mMaxObservationLength;
     size_t mInitLocalWorkSize = 1;
@@ -53,6 +56,17 @@ private:
     size_t mRecursionLocalWorkSize = 1;
     size_t mRecursionGlobalWorkSize = 1;
     size_t mMaxWorkGroupSize;
+
+    // Profiling variables
+    cl::UserEvent mEventLogACopy;
+    cl::UserEvent mEventLogBCopy;
+    cl::UserEvent mEventLogPiCopy;
+    cl::UserEvent mEventKernelInitialization;
+    std::vector<cl::UserEvent> mEventKernelRecursion;
+    cl::UserEvent mEventKernelTermination;
+    cl::UserEvent mEventResultCopy;
+    double mStartTime = 0.0;
+    double mEndTime = 0.0;
 };
 
 } // namespace hmm

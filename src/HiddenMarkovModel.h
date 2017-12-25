@@ -100,9 +100,6 @@ private:
     void loadSymbols(const std::string &fileTransitions,
                      const std::string &fileEmissions);
 
-    void storeModel(const std::string &fileTransitions,
-                    const std::string &fileEmissions);
-
     void debugPrint();
 
 };

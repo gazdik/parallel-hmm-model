@@ -22,6 +22,7 @@ protected:
     virtual void compileProgram(const std::vector<std::string> &filenames,
                                     const char *buildOptions = "");
 
+
 protected:
     cl::Context &mContext;
     std::vector<cl::Device> &mDevices;

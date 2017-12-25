@@ -26,6 +26,8 @@ public:
     virtual std::vector<std::uint32_t> evaluate(
             std::vector<std::uint32_t> &observation);
 
+    virtual void printStatistics() override;
+
 private:
 
     void createBuffers();
@@ -35,7 +37,7 @@ private:
     cl::Kernel mKernelRecursionStep;
     cl::Kernel mKernelInit;
     cl::Kernel mKernelTermination;
-    cl::Kernel mKernelViterbiPath;
+    cl::Kernel mKernelBacktrace;
 
     cl::Buffer mLogABuffer;
     cl::Buffer mLogBBuffer;
@@ -49,11 +51,21 @@ private:
     size_t mInitGlobalWorkSize = 1;
     size_t mRecursionLocalWorkSize = 1;
     size_t mRecursionGlobalWorkSize = 1;
-//    cl::NDRange mInitLocalNDRange;
-//    cl::NDRange mInitGlobalNDRange;
-//    cl::NDRange mReductionLocalNDRange;
-//    cl::NDRange mReductionGlobalNDRange;
     size_t mMaxWorkGroupSize;
+
+    // Profiling variables
+    cl::UserEvent mEventLogACopy;
+    cl::UserEvent mEventLogBCopy;
+    cl::UserEvent mEventLogPiCopy;
+    cl::UserEvent mEventPathCopy;
+    cl::UserEvent mEventKernelInitialization;
+    std::vector<cl::UserEvent> mEventKernelRecursion;
+    cl::UserEvent mEventKernelTermination;
+    cl::UserEvent mEventKernelBacktrace;
+    double mStartTime = 0.0f;
+    double mEndTime = 0.0f;
+
+    static std::vector<std::string> SOURCE_FILES;
 };
 
 } // namespace hmm
