@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     /*
      * Forward Algorithm
      */
-    float likelihood;
+    float likelihoodCPU, likelihoodGPU;
     ForwardAlgorithmCPU forwardCPU(hmm);
     ForwardAlgorithmGPU forwardGPU(hmm, obsLength, context, platform_devices);
 
@@ -133,17 +133,25 @@ int main(int argc, char *argv[])
     for (size_t i = 0; i < observations.size(); i++) {
         printf("----------    Observation %zu    ----------\n", i);
 
-        likelihood = forwardGPU.evaluate(observations[i]);
+        likelihoodGPU = forwardGPU.evaluate(observations[i]);
         forwardGPU.printStatistics();
 
-//        likelihood = forwardCPU.evaluate(observations[i]);
-//        forwardCPU.printStatistics();
+        likelihoodCPU = forwardCPU.evaluate(observations[i]);
+        forwardCPU.printStatistics();
+
+        // Print results
+        printf("Results: %s, CPU: %f, GPU: %f\n",
+               ((likelihoodCPU - likelihoodGPU) < 1e-5) ? "correct" : "incorrect",
+               likelihoodCPU,
+               likelihoodGPU
+        );
     }
 
     /*
      * Viterbi algorithm
      */
-    std::vector<uint32_t> vitPath;
+    std::vector<uint32_t> vitPathCPU, vitPathGPU;
+    bool correctResult;
     ViterbiAlgorithmCPU viterbiCPU(hmm);
     ViterbiAlgorithmGPU viterbiGPU(hmm, obsLength, context, platform_devices);
 
@@ -151,11 +159,21 @@ int main(int argc, char *argv[])
     for (size_t i = 0; i < observations.size(); i++) {
         printf("----------    Observation %zu    ----------\n", i);
 
-        vitPath = viterbiGPU.evaluate(observations[i]);
+        vitPathGPU = viterbiGPU.evaluate(observations[i]);
         viterbiGPU.printStatistics();
 
-//        vitPath = viterbiCPU.evaluate(observations[i]);
-//        viterbiCPU.printStatistics();
+        vitPathCPU = viterbiCPU.evaluate(observations[i]);
+        viterbiCPU.printStatistics();
+
+        // Compare results
+        correctResult = vitPathCPU.size() == vitPathGPU.size();
+        for (size_t i = 0; i < vitPathCPU.size(); i++) {
+            if (not correctResult)
+                break;
+
+            correctResult = vitPathCPU[i] == vitPathGPU[i];
+        }
+        printf("Result: %s\n", correctResult ? "correct" : "incorrect");
     }
 
     exit(EXIT_SUCCESS);
