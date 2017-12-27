@@ -22,3 +22,5 @@ set(SOURCE_FILES src/HiddenMarkovModel.cpp src/HiddenMarkovModel.h
         src/oclHelpers.cc src/oclHelpers.h)
 add_executable(hmm src/main.cc ${SOURCE_FILES})
 target_link_libraries(hmm ${OpenCL_LIBRARIES})
+configure_file(src/ViterbiAlgorithmGPU.cl ${CMAKE_CURRENT_BINARY_DIR}/ViterbiAlgorithmGPU.cl COPYONLY)
+configure_file(src/ForwardAlgorithmGPU.cl ${CMAKE_CURRENT_BINARY_DIR}/ForwardAlgorithmGPU.cl COPYONLY)

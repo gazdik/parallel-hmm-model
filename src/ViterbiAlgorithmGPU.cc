@@ -15,7 +15,7 @@ namespace hmm
 
 std::vector<std::string> ViterbiAlgorithmGPU::SOURCE_FILES =
         {
-                "src/ViterbiAlgorithmGPU.cl"
+                "ViterbiAlgorithmGPU.cl"
         };
 
 void ViterbiAlgorithmGPU::initKernels()

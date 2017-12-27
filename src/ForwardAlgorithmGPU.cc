@@ -15,7 +15,7 @@ namespace hmm
 
 vector<string> sourceFilesForward
         {
-                "src/ForwardAlgorithmGPU.cl"
+                "ForwardAlgorithmGPU.cl"
         };
 
 void ForwardAlgorithmGPU::initKernels()
