@@ -122,6 +122,11 @@ int main(int argc, char *argv[])
     }
 
 
+    printf("-----------------------------------------\n");
+    printf("Number of states: %d\n", numStates);
+    printf("Number of outputs: %d\n", numOutputs);
+    printf("Observation length: %d\n", obsLength);
+
     /*
      * Forward Algorithm
      */
@@ -141,7 +146,7 @@ int main(int argc, char *argv[])
 
         // Print results
         printf("Results: %s, CPU: %f, GPU: %f\n",
-               ((likelihoodCPU - likelihoodGPU) < 1e-5) ? "correct" : "incorrect",
+               ((likelihoodCPU - likelihoodGPU) < 1e-2) ? "correct" : "incorrect",
                likelihoodCPU,
                likelihoodGPU
         );
@@ -175,6 +180,7 @@ int main(int argc, char *argv[])
         }
         printf("Result: %s\n", correctResult ? "correct" : "incorrect");
     }
+    printf("\n\n");
 
     exit(EXIT_SUCCESS);
 }
