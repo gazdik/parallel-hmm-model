@@ -4,6 +4,7 @@
  * @date        17/12/17
  * @copyright   The MIT License (MIT)
  */
+
 #include "HiddenMarkovModel.h"
 #include "oclHelpers.h"
 #include "ViterbiAlgorithmGPU.h"

@@ -1,3 +1,9 @@
+/**
+ * @author      Peter Gazdík <xgazdi03(at)stud.fit.vutbr.cz>
+ *              Michal Klčo <xklcom00(at)stud.fit.vutbr.cz>
+ * @date        17/12/17
+ * @copyright   The MIT License (MIT)
+ */
 
 
 float add_log(float x, float y)

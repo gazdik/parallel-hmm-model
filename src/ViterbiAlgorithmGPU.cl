@@ -5,6 +5,29 @@
  * @copyright   The MIT License (MIT)
  */
 
+
+/**
+ * Initialization step of the Viterbi algorithm.
+ * @param logA  Transition probility matrix A, each element (i,j) represents
+ *              the probability of moving from state i to state j.
+ *              The matrix contains NxN elements where N is the number of states
+ *              in the model.
+ * @param logB  Emission probability matrix B, each element (i,j) represents
+ *              the probability of observation symbol j being generated from
+ *              state i. The matrix contains NxM where N is the number of states
+ *              and M is the number of observation symbols in the model.
+ * @param logPi Vector of initial state probabilities. The vector contains
+ *              N elements where N is the number of states in the model.
+ * @param V     Viterbi probability matrix V, each element (t, i) represents
+ *              the probability that the HMM is in state i after seeing
+ *              the first t observations and passing through the most probable
+ *              sequence x_0, x_1, ..., x_t-1.
+ *              The matrix contains NxT elements where N is the number of states
+ *              and T is the length of observation sequence.
+ * @param N     The number of states in the model.
+ * @param M     The number of observation symbols in the model.
+ * @param o     Observation symbol from an observation sequence at the first position.
+ */
 __kernel void viterbi_init(__global float *logA,
                            __global float *logB,
                            __global float *logPi,
@@ -22,31 +45,11 @@ __kernel void viterbi_init(__global float *logA,
     }
 }
 
-/**
- * Calculate Viterbi path.
- * @param logA  Transition probility matrix A, each element (i,j) represents
- *              the probability of moving from state i to state j.
- *              The matrix contains NxN elements where N is the number of states
- *              in the model.
- * @param logB  Emission probability matrix B, each element (i,j) represents
- *              the probability of observation symbol j being generated from
- *              state i. The matrix contains NxM where N is the number of states
- *              and M is the number of observation symbols in the model.
- * @param logPi Vector of initial state probabilities. The vector contains
- *              N elements where N is the number of states in the model.
- * @param O     Observation sequence which contains T observation symbols.
- * @param V     Viterbi probability matrix V, each element (i, t) represents
- *              the probability that the HMM is in state i after seeing
- *              the first t observations and passing through the most probable
- *              sequence x_0, x_1, ..., x_t-1.
- *              The matrix contains NxT elements where N is the number of states
- *              and T is the length of observation sequence.
- * @param N     The number of states in the model.
- * @param M     The number of observation symbols in the model.
- * @param T     The length of the observation sequence O
- * @return
- */
 
+/**
+ * Find the maximum value in array 'maxValue' and store the index of maximal value
+ * in array maxInd
+ */
 void local_maximum(__local float *maxValue,
                    __local int *maxInd)
 {
@@ -69,6 +72,29 @@ void local_maximum(__local float *maxValue,
     }
 }
 
+/**
+ * Calculate single recursion step of the Viterbi algorithm
+ * @param logA  Transition probility matrix A, each element (i,j) represents
+ *              the probability of moving from state i to state j.
+ *              The matrix contains NxN elements where N is the number of states
+ *              in the model.
+ * @param logB  Emission probability matrix B, each element (i,j) represents
+ *              the probability of observation symbol j being generated from
+ *              state i. The matrix contains NxM where N is the number of states
+ *              and M is the number of observation symbols in the model.
+ * @param logPi Vector of initial state probabilities. The vector contains
+ *              N elements where N is the number of states in the model.
+ * @param V     Viterbi probability matrix V, each element (t, i) represents
+ *              the probability that the HMM is in state i after seeing
+ *              the first t observations and passing through the most probable
+ *              sequence x_0, x_1, ..., x_t-1.
+ *              The matrix contains NxT elements where N is the number of states
+ *              and T is the length of observation sequence.
+ * @param N     The number of states in the model.
+ * @param M     The number of observation symbols in the model.
+ * @param o     Observation symbol from an observation sequence at position t.
+ * @param t     Current position in an observation sequence.
+ */
 __kernel void viterbi_recursion_step(__global float *logA,
                                      __global float *logB,
                                      __global float *logPi,
@@ -112,6 +138,18 @@ __kernel void viterbi_recursion_step(__global float *logA,
 
 }
 
+/**
+ * Calculate termination step of the Viterbi algorithm
+ * @param V         Viterbi probability matrix V, each element (t, i) represents
+ *                  the probability that the HMM is in state i after seeing
+ *                  the first t observations and passing through the most probable
+ *                  sequence x_0, x_1, ..., x_t-1.
+ *                  The matrix contains NxT elements where N is the number of states
+ *                  and T is the length of observation sequence.
+ * @param maxState  The last state of the most likely state sequence.
+ * @param N         The number of states in the model.
+ * @param T         The observation length.
+ */
 __kernel void viterbi_termination(__global float *V,
                                   __global unsigned int *maxState,
                                   __local float maxValue[],
@@ -159,6 +197,31 @@ __kernel void viterbi_path(__global unsigned int *backtrace,
     }
 }
 
+
+/**
+ * Calculate sequentially single recursion step of the Viterbi algorithm.
+ * It's useful only for debugging.
+ * @param logA  Transition probility matrix A, each element (i,j) represents
+ *              the probability of moving from state i to state j.
+ *              The matrix contains NxN elements where N is the number of states
+ *              in the model.
+ * @param logB  Emission probability matrix B, each element (i,j) represents
+ *              the probability of observation symbol j being generated from
+ *              state i. The matrix contains NxM where N is the number of states
+ *              and M is the number of observation symbols in the model.
+ * @param logPi Vector of initial state probabilities. The vector contains
+ *              N elements where N is the number of states in the model.
+ * @param V     Viterbi probability matrix V, each element (t, i) represents
+ *              the probability that the HMM is in state i after seeing
+ *              the first t observations and passing through the most probable
+ *              sequence x_0, x_1, ..., x_t-1.
+ *              The matrix contains NxT elements where N is the number of states
+ *              and T is the length of observation sequence.
+ * @param N     The number of states in the model.
+ * @param M     The number of observation symbols in the model.
+ * @param o     Observation symbol from an observation sequence at position t.
+ * @param t     Current position in an observation sequence.
+ */
 __kernel void viterbi_recursion_step_seq(__global float *logA,
                                      __global float *logB,
                                      __global float *logPi,
