@@ -1,0 +1,826 @@
+ 0. platform name: NVIDIA CUDA.
+  0. device name: GeForce 930M
+Selected device: GeForce 930M
+Initialiazing HMM...
+HMM has been initialized
+-----------------------------------------
+Number of states: 1024
+Number of outputs: 32
+Observation length: 20
+**********  Forward Algorithm  **********
+----------    Observation 0    ----------
+Forward Algorithm GPU
+  Execution time: 56.039ms
+  Static buffers copy: 2.790ms
+  Initialization step: 0.032ms
+  Recursion step: 53.469ms
+  Termination step: 2.400ms
+  Result copy: 0.004ms
+Forward Algorithm CPU
+  Execution time: 4031.750ms
+  Initialization step: 0.081ms
+  Recursion step: 4031.405ms
+  Termination step: 0.091ms
+Results: correct, CPU: -69.303345, GPU: -69.303383
+**********  Viterbi Algorithm  **********
+----------    Observation 0    ----------
+Viterbi Algorithm GPU
+  Execution time: 28.514ms
+  Static buffers copy: 2.984ms
+  Initialization step: 0.028ms
+  Recursion step: 27.404ms
+  Termination step: 0.903ms
+  Backtrace step: 0.021ms
+  Path copy: 0.004ms
+Viterbi Algorithm CPU
+  Execution time: 1670.622ms
+  Initialization step: 0.057ms
+  Recursion step: 1670.310ms
+  Termination step: 0.018ms
+  Backtrace step: 0.002ms
+Result: correct
+
+
+ 0. platform name: NVIDIA CUDA.
+  0. device name: GeForce 930M
+Selected device: GeForce 930M
+Initialiazing HMM...
+HMM has been initialized
+-----------------------------------------
+Number of states: 2048
+Number of outputs: 32
+Observation length: 20
+**********  Forward Algorithm  **********
+----------    Observation 0    ----------
+Forward Algorithm GPU
+  Execution time: 145.510ms
+  Static buffers copy: 12.127ms
+  Initialization step: 0.048ms
+  Recursion step: 139.269ms
+  Termination step: 5.987ms
+  Result copy: 0.004ms
+Forward Algorithm CPU
+  Execution time: 17810.672ms
+  Initialization step: 0.122ms
+  Recursion step: 17810.129ms
+  Termination step: 0.181ms
+Results: correct, CPU: -69.382195, GPU: -69.382126
+**********  Viterbi Algorithm  **********
+----------    Observation 0    ----------
+Viterbi Algorithm GPU
+  Execution time: 84.820ms
+  Static buffers copy: 12.217ms
+  Initialization step: 0.041ms
+  Recursion step: 82.653ms
+  Termination step: 1.937ms
+  Backtrace step: 0.020ms
+  Path copy: 0.004ms
+Viterbi Algorithm CPU
+  Execution time: 8455.760ms
+  Initialization step: 0.118ms
+  Recursion step: 8455.141ms
+  Termination step: 0.034ms
+  Backtrace step: 0.002ms
+Result: correct
+
+
+ 0. platform name: NVIDIA CUDA.
+  0. device name: GeForce 930M
+Selected device: GeForce 930M
+Initialiazing HMM...
+HMM has been initialized
+-----------------------------------------
+Number of states: 4086
+Number of outputs: 32
+Observation length: 20
+**********  Forward Algorithm  **********
+----------    Observation 0    ----------
+Forward Algorithm GPU
+  Execution time: 382.841ms
+  Static buffers copy: 49.509ms
+  Initialization step: 0.055ms
+  Recursion step: 366.740ms
+  Termination step: 15.889ms
+  Result copy: 0.004ms
+Forward Algorithm CPU
+  Execution time: 54639.441ms
+  Initialization step: 0.242ms
+  Recursion step: 54638.387ms
+  Termination step: 0.360ms
+Results: correct, CPU: -69.330238, GPU: -69.329948
+**********  Viterbi Algorithm  **********
+----------    Observation 0    ----------
+Viterbi Algorithm GPU
+  Execution time: 258.085ms
+  Static buffers copy: 49.531ms
+  Initialization step: 0.055ms
+  Recursion step: 253.220ms
+  Termination step: 4.353ms
+  Backtrace step: 0.020ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 17418.796ms
+  Initialization step: 0.321ms
+  Recursion step: 17417.226ms
+  Termination step: 0.067ms
+  Backtrace step: 0.002ms
+Result: correct
+
+
+ 0. platform name: NVIDIA CUDA.
+  0. device name: GeForce 930M
+Selected device: GeForce 930M
+Initialiazing HMM...
+HMM has been initialized
+-----------------------------------------
+Number of states: 4096
+Number of outputs: 32
+Observation length: 20
+**********  Forward Algorithm  **********
+----------    Observation 0    ----------
+Forward Algorithm GPU
+  Execution time: 467.505ms
+  Static buffers copy: 49.864ms
+  Initialization step: 0.056ms
+  Recursion step: 450.654ms
+  Termination step: 16.650ms
+  Result copy: 0.004ms
+Forward Algorithm CPU
+  Execution time: 72311.149ms
+  Initialization step: 0.252ms
+  Recursion step: 72310.077ms
+  Termination step: 0.362ms
+Results: correct, CPU: -69.341568, GPU: -69.341385
+**********  Viterbi Algorithm  **********
+----------    Observation 0    ----------
+Viterbi Algorithm GPU
+  Execution time: 336.349ms
+  Static buffers copy: 49.504ms
+  Initialization step: 0.053ms
+  Recursion step: 331.564ms
+  Termination step: 4.358ms
+  Backtrace step: 0.022ms
+  Path copy: 0.004ms
+Viterbi Algorithm CPU
+  Execution time: 32903.176ms
+  Initialization step: 0.243ms
+  Recursion step: 32901.960ms
+  Termination step: 0.079ms
+  Backtrace step: 0.002ms
+Result: correct
+
+
+ 0. platform name: NVIDIA CUDA.
+  0. device name: GeForce 930M
+Selected device: GeForce 930M
+Initialiazing HMM...
+HMM has been initialized
+-----------------------------------------
+Number of states: 5006
+Number of outputs: 32
+Observation length: 20
+**********  Forward Algorithm  **********
+----------    Observation 0    ----------
+Forward Algorithm GPU
+  Execution time: 575.713ms
+  Static buffers copy: 76.891ms
+  Initialization step: 0.062ms
+  Recursion step: 553.827ms
+  Termination step: 21.775ms
+  Result copy: 0.004ms
+Forward Algorithm CPU
+  Execution time: 81039.009ms
+  Initialization step: 0.294ms
+  Recursion step: 81037.711ms
+  Termination step: 0.441ms
+Results: correct, CPU: -69.314926, GPU: -69.314751
+**********  Viterbi Algorithm  **********
+----------    Observation 0    ----------
+Viterbi Algorithm GPU
+  Execution time: 485.350ms
+  Static buffers copy: 77.320ms
+  Initialization step: 0.061ms
+  Recursion step: 479.305ms
+  Termination step: 5.625ms
+  Backtrace step: 0.020ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 26041.676ms
+  Initialization step: 0.406ms
+  Recursion step: 26039.734ms
+  Termination step: 0.082ms
+  Backtrace step: 0.003ms
+Result: correct
+
+
+ 0. platform name: NVIDIA CUDA.
+  0. device name: GeForce 930M
+Selected device: GeForce 930M
+Initialiazing HMM...
+HMM has been initialized
+-----------------------------------------
+Number of states: 4097
+Number of outputs: 32
+Observation length: 20
+**********  Forward Algorithm  **********
+----------    Observation 0    ----------
+Forward Algorithm GPU
+  Execution time: 382.250ms
+  Static buffers copy: 50.256ms
+  Initialization step: 0.058ms
+  Recursion step: 365.604ms
+  Termination step: 16.459ms
+  Result copy: 0.004ms
+Forward Algorithm CPU
+  Execution time: 54157.083ms
+  Initialization step: 0.330ms
+  Recursion step: 54155.747ms
+  Termination step: 0.361ms
+Results: correct, CPU: -69.305962, GPU: -69.305717
+**********  Viterbi Algorithm  **********
+----------    Observation 0    ----------
+Viterbi Algorithm GPU
+  Execution time: 263.347ms
+  Static buffers copy: 49.475ms
+  Initialization step: 0.053ms
+  Recursion step: 258.525ms
+  Termination step: 4.370ms
+  Backtrace step: 0.020ms
+  Path copy: 0.004ms
+Viterbi Algorithm CPU
+  Execution time: 17384.079ms
+  Initialization step: 0.240ms
+  Recursion step: 17382.862ms
+  Termination step: 0.067ms
+  Backtrace step: 0.002ms
+Result: correct
+
+
+ 0. platform name: NVIDIA CUDA.
+  0. device name: GeForce 930M
+Selected device: GeForce 930M
+Initialiazing HMM...
+HMM has been initialized
+-----------------------------------------
+Number of states: 5006
+Number of outputs: 32
+Observation length: 20
+**********  Forward Algorithm  **********
+----------    Observation 0    ----------
+Forward Algorithm GPU
+  Execution time: 576.130ms
+  Static buffers copy: 76.863ms
+  Initialization step: 0.066ms
+  Recursion step: 554.162ms
+  Termination step: 21.765ms
+  Result copy: 0.004ms
+Forward Algorithm CPU
+  Execution time: 81449.779ms
+  Initialization step: 0.294ms
+  Recursion step: 81448.483ms
+  Termination step: 0.441ms
+Results: correct, CPU: -69.314926, GPU: -69.314751
+**********  Viterbi Algorithm  **********
+----------    Observation 0    ----------
+Viterbi Algorithm GPU
+  Execution time: 485.441ms
+  Static buffers copy: 78.309ms
+  Initialization step: 0.060ms
+  Recursion step: 479.361ms
+  Termination step: 5.627ms
+  Backtrace step: 0.020ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 26047.135ms
+  Initialization step: 0.293ms
+  Recursion step: 26045.694ms
+  Termination step: 0.082ms
+  Backtrace step: 0.003ms
+Result: correct
+
+
+Usage hmm -s numOfStates -o numOfOutputs [-p platform] [-d device] [-l obsLength] [-O numOfObservations]
+ 0. platform name: NVIDIA CUDA.
+  0. device name: GeForce 930M
+Selected device: GeForce 930M
+Initialiazing HMM...
+HMM has been initialized
+-----------------------------------------
+Number of states: 4098
+Number of outputs: 32
+Observation length: 20
+**********  Forward Algorithm  **********
+----------    Observation 0    ----------
+Forward Algorithm GPU
+  Execution time: 384.912ms
+  Static buffers copy: 50.119ms
+  Initialization step: 0.058ms
+  Recursion step: 367.795ms
+  Termination step: 16.930ms
+  Result copy: 0.004ms
+Forward Algorithm CPU
+  Execution time: 54780.447ms
+  Initialization step: 0.326ms
+  Recursion step: 54779.119ms
+  Termination step: 0.362ms
+Results: correct, CPU: -69.306732, GPU: -69.306450
+----------    Observation 1    ----------
+Forward Algorithm GPU
+  Execution time: 387.299ms
+  Static buffers copy: 50.119ms
+  Initialization step: 0.242ms
+  Recursion step: 369.860ms
+  Termination step: 16.923ms
+  Result copy: 0.004ms
+Forward Algorithm CPU
+  Execution time: 54875.370ms
+  Initialization step: 0.239ms
+  Recursion step: 54874.430ms
+  Termination step: 0.361ms
+Results: correct, CPU: -69.322449, GPU: -69.322311
+----------    Observation 2    ----------
+Forward Algorithm GPU
+  Execution time: 387.286ms
+  Static buffers copy: 50.119ms
+  Initialization step: 0.242ms
+  Recursion step: 369.849ms
+  Termination step: 16.926ms
+  Result copy: 0.003ms
+Forward Algorithm CPU
+  Execution time: 54775.302ms
+  Initialization step: 0.242ms
+  Recursion step: 54774.355ms
+  Termination step: 0.362ms
+Results: correct, CPU: -69.336266, GPU: -69.336136
+----------    Observation 3    ----------
+Forward Algorithm GPU
+  Execution time: 386.993ms
+  Static buffers copy: 50.119ms
+  Initialization step: 0.244ms
+  Recursion step: 369.712ms
+  Termination step: 16.763ms
+  Result copy: 0.003ms
+Forward Algorithm CPU
+  Execution time: 54736.381ms
+  Initialization step: 0.238ms
+  Recursion step: 54735.441ms
+  Termination step: 0.362ms
+Results: correct, CPU: -69.259354, GPU: -69.259300
+----------    Observation 4    ----------
+Forward Algorithm GPU
+  Execution time: 387.341ms
+  Static buffers copy: 50.119ms
+  Initialization step: 0.242ms
+  Recursion step: 370.149ms
+  Termination step: 16.686ms
+  Result copy: 0.003ms
+Forward Algorithm CPU
+  Execution time: 54711.329ms
+  Initialization step: 0.238ms
+  Recursion step: 54710.389ms
+  Termination step: 0.361ms
+Results: correct, CPU: -69.308952, GPU: -69.308708
+----------    Observation 5    ----------
+Forward Algorithm GPU
+  Execution time: 387.107ms
+  Static buffers copy: 50.119ms
+  Initialization step: 0.243ms
+  Recursion step: 370.011ms
+  Termination step: 16.584ms
+  Result copy: 0.003ms
+Forward Algorithm CPU
+  Execution time: 55253.719ms
+  Initialization step: 0.241ms
+  Recursion step: 55252.777ms
+  Termination step: 0.361ms
+Results: correct, CPU: -69.311852, GPU: -69.311661
+----------    Observation 6    ----------
+Forward Algorithm GPU
+  Execution time: 386.686ms
+  Static buffers copy: 50.119ms
+  Initialization step: 0.245ms
+  Recursion step: 369.758ms
+  Termination step: 16.372ms
+  Result copy: 0.003ms
+Forward Algorithm CPU
+  Execution time: 54876.019ms
+  Initialization step: 0.240ms
+  Recursion step: 54875.069ms
+  Termination step: 0.366ms
+Results: correct, CPU: -69.344666, GPU: -69.344368
+----------    Observation 7    ----------
+Forward Algorithm GPU
+  Execution time: 386.782ms
+  Static buffers copy: 50.119ms
+  Initialization step: 0.243ms
+  Recursion step: 369.501ms
+  Termination step: 16.768ms
+  Result copy: 0.003ms
+Forward Algorithm CPU
+  Execution time: 54914.606ms
+  Initialization step: 0.240ms
+  Recursion step: 54913.665ms
+  Termination step: 0.362ms
+Results: correct, CPU: -69.333031, GPU: -69.332947
+----------    Observation 8    ----------
+Forward Algorithm GPU
+  Execution time: 386.279ms
+  Static buffers copy: 50.119ms
+  Initialization step: 0.243ms
+  Recursion step: 369.375ms
+  Termination step: 16.392ms
+  Result copy: 0.003ms
+Forward Algorithm CPU
+  Execution time: 54708.151ms
+  Initialization step: 0.241ms
+  Recursion step: 54707.207ms
+  Termination step: 0.361ms
+Results: correct, CPU: -69.324440, GPU: -69.324333
+----------    Observation 9    ----------
+Forward Algorithm GPU
+  Execution time: 387.103ms
+  Static buffers copy: 50.119ms
+  Initialization step: 0.245ms
+  Recursion step: 369.236ms
+  Termination step: 16.617ms
+  Result copy: 0.003ms
+Forward Algorithm CPU
+  Execution time: 54778.870ms
+  Initialization step: 0.344ms
+  Recursion step: 54777.646ms
+  Termination step: 0.361ms
+Results: correct, CPU: -69.335587, GPU: -69.335350
+**********  Viterbi Algorithm  **********
+----------    Observation 0    ----------
+Viterbi Algorithm GPU
+  Execution time: 260.430ms
+  Static buffers copy: 49.149ms
+  Initialization step: 0.057ms
+  Recursion step: 252.210ms
+  Termination step: 4.377ms
+  Backtrace step: 0.021ms
+  Path copy: 0.004ms
+Viterbi Algorithm CPU
+  Execution time: 17350.829ms
+  Initialization step: 0.245ms
+  Recursion step: 17349.588ms
+  Termination step: 0.067ms
+  Backtrace step: 0.002ms
+Result: correct
+----------    Observation 1    ----------
+Viterbi Algorithm GPU
+  Execution time: 257.784ms
+  Static buffers copy: 49.149ms
+  Initialization step: 0.051ms
+  Recursion step: 252.148ms
+  Termination step: 4.377ms
+  Backtrace step: 0.019ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 17359.355ms
+  Initialization step: 0.346ms
+  Recursion step: 17357.963ms
+  Termination step: 0.068ms
+  Backtrace step: 0.003ms
+Result: correct
+----------    Observation 2    ----------
+Viterbi Algorithm GPU
+  Execution time: 265.286ms
+  Static buffers copy: 49.149ms
+  Initialization step: 0.057ms
+  Recursion step: 251.662ms
+  Termination step: 4.376ms
+  Backtrace step: 0.019ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 17402.474ms
+  Initialization step: 0.240ms
+  Recursion step: 17401.479ms
+  Termination step: 0.067ms
+  Backtrace step: 0.002ms
+Result: correct
+----------    Observation 3    ----------
+Viterbi Algorithm GPU
+  Execution time: 290.884ms
+  Static buffers copy: 49.149ms
+  Initialization step: 0.055ms
+  Recursion step: 251.759ms
+  Termination step: 4.378ms
+  Backtrace step: 0.019ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 17356.096ms
+  Initialization step: 0.241ms
+  Recursion step: 17355.099ms
+  Termination step: 0.067ms
+  Backtrace step: 0.002ms
+Result: correct
+----------    Observation 4    ----------
+Viterbi Algorithm GPU
+  Execution time: 310.922ms
+  Static buffers copy: 49.149ms
+  Initialization step: 0.051ms
+  Recursion step: 251.888ms
+  Termination step: 4.381ms
+  Backtrace step: 0.019ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 17353.391ms
+  Initialization step: 0.242ms
+  Recursion step: 17352.388ms
+  Termination step: 0.068ms
+  Backtrace step: 0.002ms
+Result: correct
+----------    Observation 5    ----------
+Viterbi Algorithm GPU
+  Execution time: 256.455ms
+  Static buffers copy: 49.149ms
+  Initialization step: 0.053ms
+  Recursion step: 251.823ms
+  Termination step: 4.380ms
+  Backtrace step: 0.019ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 17361.903ms
+  Initialization step: 0.241ms
+  Recursion step: 17360.888ms
+  Termination step: 0.067ms
+  Backtrace step: 0.003ms
+Result: correct
+----------    Observation 6    ----------
+Viterbi Algorithm GPU
+  Execution time: 474.803ms
+  Static buffers copy: 49.149ms
+  Initialization step: 0.053ms
+  Recursion step: 251.790ms
+  Termination step: 4.379ms
+  Backtrace step: 0.019ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 17370.859ms
+  Initialization step: 0.346ms
+  Recursion step: 17369.459ms
+  Termination step: 0.067ms
+  Backtrace step: 0.002ms
+Result: correct
+----------    Observation 7    ----------
+Viterbi Algorithm GPU
+  Execution time: 260.335ms
+  Static buffers copy: 49.149ms
+  Initialization step: 0.051ms
+  Recursion step: 251.957ms
+  Termination step: 4.380ms
+  Backtrace step: 0.019ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 17364.739ms
+  Initialization step: 0.349ms
+  Recursion step: 17363.340ms
+  Termination step: 0.067ms
+  Backtrace step: 0.002ms
+Result: correct
+----------    Observation 8    ----------
+Viterbi Algorithm GPU
+  Execution time: 409.122ms
+  Static buffers copy: 49.149ms
+  Initialization step: 0.056ms
+  Recursion step: 251.727ms
+  Termination step: 4.375ms
+  Backtrace step: 0.019ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 17481.842ms
+  Initialization step: 0.238ms
+  Recursion step: 17480.611ms
+  Termination step: 0.067ms
+  Backtrace step: 0.002ms
+Result: correct
+----------    Observation 9    ----------
+Viterbi Algorithm GPU
+  Execution time: 340.316ms
+  Static buffers copy: 49.149ms
+  Initialization step: 0.059ms
+  Recursion step: 251.736ms
+  Termination step: 4.389ms
+  Backtrace step: 0.028ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 17373.377ms
+  Initialization step: 0.245ms
+  Recursion step: 17372.368ms
+  Termination step: 0.067ms
+  Backtrace step: 0.002ms
+Result: correct
+
+
+ 0. platform name: NVIDIA CUDA.
+  0. device name: GeForce 930M
+Selected device: GeForce 930M
+Initialiazing HMM...
+HMM has been initialized
+-----------------------------------------
+Number of states: 8192
+Number of outputs: 32
+Observation length: 40
+**********  Forward Algorithm  **********
+----------    Observation 0    ----------
+Forward Algorithm GPU
+  Execution time: 4150.387ms
+  Static buffers copy: 227.613ms
+  Initialization step: 0.101ms
+  Recursion step: 4106.416ms
+  Termination step: 43.279ms
+  Result copy: 0.004ms
+Forward Algorithm CPU
+  Execution time: 613588.564ms
+  Initialization step: 0.643ms
+  Recursion step: 613584.787ms
+  Termination step: 0.726ms
+Results: correct, CPU: -138.584412, GPU: -138.579803
+----------    Observation 1    ----------
+Forward Algorithm GPU
+  Execution time: 4127.015ms
+  Static buffers copy: 227.613ms
+  Initialization step: 0.456ms
+  Recursion step: 4084.081ms
+  Termination step: 42.202ms
+  Result copy: 0.004ms
+Forward Algorithm CPU
+  Execution time: 629222.149ms
+  Initialization step: 0.501ms
+  Recursion step: 629219.174ms
+  Termination step: 0.731ms
+Results: correct, CPU: -138.619247, GPU: -138.615219
+----------    Observation 2    ----------
+Forward Algorithm GPU
+  Execution time: 4129.002ms
+  Static buffers copy: 227.613ms
+  Initialization step: 0.455ms
+  Recursion step: 4084.460ms
+  Termination step: 43.789ms
+  Result copy: 0.003ms
+Forward Algorithm CPU
+  Execution time: 606200.317ms
+  Initialization step: 0.493ms
+  Recursion step: 606197.770ms
+  Termination step: 0.724ms
+Results: correct, CPU: -138.638489, GPU: -138.634521
+**********  Viterbi Algorithm  **********
+----------    Observation 0    ----------
+Viterbi Algorithm GPU
+  Execution time: 3926.447ms
+  Static buffers copy: 221.721ms
+  Initialization step: 0.093ms
+  Recursion step: 3914.833ms
+  Termination step: 10.887ms
+  Backtrace step: 0.031ms
+  Path copy: 0.004ms
+Viterbi Algorithm CPU
+  Execution time: 271469.214ms
+  Initialization step: 0.501ms
+  Recursion step: 271465.178ms
+  Termination step: 0.144ms
+  Backtrace step: 0.005ms
+Result: correct
+----------    Observation 1    ----------
+Viterbi Algorithm GPU
+  Execution time: 3931.330ms
+  Static buffers copy: 221.721ms
+  Initialization step: 0.459ms
+  Recursion step: 3919.645ms
+  Termination step: 10.888ms
+  Backtrace step: 0.031ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 271530.938ms
+  Initialization step: 0.498ms
+  Recursion step: 271526.656ms
+  Termination step: 0.145ms
+  Backtrace step: 0.005ms
+Result: correct
+----------    Observation 2    ----------
+Viterbi Algorithm GPU
+  Execution time: 3933.150ms
+  Static buffers copy: 221.721ms
+  Initialization step: 0.453ms
+  Recursion step: 3920.945ms
+  Termination step: 10.898ms
+  Backtrace step: 0.031ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 268966.456ms
+  Initialization step: 0.494ms
+  Recursion step: 268962.153ms
+  Termination step: 0.144ms
+  Backtrace step: 0.005ms
+Result: correct
+
+
+ 0. platform name: NVIDIA CUDA.
+  0. device name: GeForce 930M
+Selected device: GeForce 930M
+Initialiazing HMM...
+HMM has been initialized
+-----------------------------------------
+Number of states: 11000
+Number of outputs: 32
+Observation length: 40
+**********  Forward Algorithm  **********
+----------    Observation 0    ----------
+Forward Algorithm GPU
+  Execution time: 8193.029ms
+  Static buffers copy: 411.975ms
+  Initialization step: 0.130ms
+  Recursion step: 8128.253ms
+  Termination step: 64.211ms
+  Result copy: 0.004ms
+Forward Algorithm CPU
+  Execution time: 977008.015ms
+  Initialization step: 0.685ms
+  Recursion step: 977003.812ms
+  Termination step: 0.998ms
+Results: correct, CPU: -138.546616, GPU: -138.539551
+----------    Observation 1    ----------
+Forward Algorithm GPU
+  Execution time: 8197.318ms
+  Static buffers copy: 411.975ms
+  Initialization step: 0.605ms
+  Recursion step: 8130.548ms
+  Termination step: 63.669ms
+  Result copy: 0.004ms
+Forward Algorithm CPU
+  Execution time: 974229.607ms
+  Initialization step: 0.667ms
+  Recursion step: 974225.557ms
+  Termination step: 1.003ms
+Results: correct, CPU: -138.537003, GPU: -138.529480
+----------    Observation 2    ----------
+Forward Algorithm GPU
+  Execution time: 8196.336ms
+  Static buffers copy: 411.975ms
+  Initialization step: 0.603ms
+  Recursion step: 8131.480ms
+  Termination step: 63.659ms
+  Result copy: 0.003ms
+Forward Algorithm CPU
+  Execution time: 972833.887ms
+  Initialization step: 0.671ms
+  Recursion step: 972830.438ms
+  Termination step: 1.000ms
+Results: correct, CPU: -138.543304, GPU: -138.536346
+**********  Viterbi Algorithm  **********
+----------    Observation 0    ----------
+Viterbi Algorithm GPU
+  Execution time: 9507.707ms
+  Static buffers copy: 407.306ms
+  Initialization step: 0.131ms
+  Recursion step: 9489.848ms
+  Termination step: 16.530ms
+  Backtrace step: 0.031ms
+  Path copy: 0.004ms
+Viterbi Algorithm CPU
+  Execution time: 322387.965ms
+  Initialization step: 0.663ms
+  Recursion step: 322382.655ms
+  Termination step: 0.200ms
+  Backtrace step: 0.006ms
+Result: correct
+----------    Observation 1    ----------
+Viterbi Algorithm GPU
+  Execution time: 9551.795ms
+  Static buffers copy: 407.306ms
+  Initialization step: 0.605ms
+  Recursion step: 9534.073ms
+  Termination step: 16.533ms
+  Backtrace step: 0.031ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 330405.705ms
+  Initialization step: 0.675ms
+  Recursion step: 330399.888ms
+  Termination step: 0.221ms
+  Backtrace step: 0.005ms
+Result: correct
+----------    Observation 2    ----------
+Viterbi Algorithm GPU
+  Execution time: 9489.522ms
+  Static buffers copy: 407.306ms
+  Initialization step: 0.606ms
+  Recursion step: 9472.333ms
+  Termination step: 16.519ms
+  Backtrace step: 0.031ms
+  Path copy: 0.003ms
+Viterbi Algorithm CPU
+  Execution time: 413240.114ms
+  Initialization step: 1.000ms
+  Recursion step: 413232.153ms
+  Termination step: 0.224ms
+  Backtrace step: 0.006ms
+Result: correct
+
+
+ 0. platform name: NVIDIA CUDA.
+  0. device name: GeForce 930M
+Selected device: GeForce 930M
+Initialiazing HMM...
+HMM has been initialized
