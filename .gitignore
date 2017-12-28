@@ -21,6 +21,7 @@
 
 # CMake
 cmake-build-debug/
+bin/
 
 # Mongo Explorer plugin:
 .idea/**/mongoSettings.xml
@@ -47,3 +48,10 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+# LaTeX Documentation
+doc/*.aux
+doc/*.log
+doc/gmu.pdf
+doc/*.out
+
