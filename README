@@ -1,0 +1,28 @@
+# Autori
+
+- Peter Gazdík <xgazdi03@stud.fit.vutbr.cz>
+- Michal Klčo <xklcom00@stud.fit.vutbr.cz>
+
+# Preklad
+
+Preklad aplikácie zabezpečuje nástroj CMake.
+
+# Potrebné nástroje
+
+- CMake
+- OpenCL
+- OpenMP
+- getopt.h pre spracovanie parametrov, t.j. mierná komplikácia pri preklade
+  na Windows.
+
+# Spustenie aplikácie
+
+./hmm -s num_of_states -o num_of_outputs [-p platform] [-d device]
+      [-l obs_length] [-O num_of_observations]
+
+  -s počet stavov HMM,
+  -o počet výstupov, ktoré HMM emituje,
+  -p číslo OpenCL platformy, ktorá sa má použiť (z výpisu, programu), defaultne sa zvolí prvá dostupná,
+  -d číslo OpenCL zariadenia, ktoré má byť použité (z výpisu programu), defaultne sa zvolí prvé dostupné,
+  -l dĺžka jedného pozorovania, ktoré sa vyhodnocuje, defaultná hodnota je 30 symbolov,
+  -O počet pozorovaní, defaultná hodnota je jedno pozorovanie.
