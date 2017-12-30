@@ -11,6 +11,6 @@ make
 cd ..
 
 mkdir "$1"
-cp -t "$1" -r src/ CMakeLists.txt doc/doc.pdf
+cp -t "$1" -r src/ CMakeLists.txt doc/doc.pdf README
 zip -r "$1".zip "$1"
 rm -r "$1"
