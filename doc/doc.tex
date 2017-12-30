@@ -1,0 +1,417 @@
+\documentclass[11pt,a4paper]{article}
+\input{config}
+
+\begin{document}
+\titlepageandcontents
+
+%---------------------------------------------------------------------------
+\section{Zadanie}
+
+Predveďte praktickú úlohu riešenú pomocou Hidden Markov Model (HMM):
+\begin{itemize}
+\item zvoľte si úlohu, ktorú budete riešiť pomocou HMM
+\item implementujte Forward algoritmus na CPU a GPU
+\item implementujte Viterbiho algoritmus na CPU a GPU
+\item popíšte zpôsob paralelizácie implementovaných algoritmov a použitý HW.
+\item porovnajte časy behov algoritmov implementovaných na CPU a GPU
+\item analyzujte časové zložitosti implementácii algoritmov na CPU a GPU
+\end{itemize}
+%Zde napište informace k zadání (nejde jen o přepis toho, co je na webu;
+%komentujte vaše vlastní zpřesnění zadání, zaměření, důrazy, pojetí %atd.). Text
+%strukturujte, použijte odrážky, číslování$\ldots$
+
+%Rozsah: cca 10 odrážek
+
+%---------------------------------------------------------------------------
+\section{Použité technologie}
+\begin{itemize}
+\item C++
+\item OpenCL
+\item CMake
+\end{itemize}
+%Zde vypište, jaké technologie vaše řešení používá – co potřebuje k běhu, co
+%jste použili při tvorbě, atd. Text strukturujte, použijte odrážky,
+%číslování$\ldots$
+
+%Rozsah: cca 7 odrážek
+
+%---------------------------------------------------------------------------
+\section{Použité zdroje}
+\begin{itemize}
+\item A tutorial on hidden Markov models and selected applications in speech recognition \cite{rabiner}
+\item Optimizing parallel reduction in CUDA \cite{cuda-reductions}
+\item NVIDIA OpenCL examples \url{https://github.com/sschaetz/nvidia-opencl-examples}
+\item Speech and Language Processing: Hidden Markov Models \cite{jurafsky_martin}
+\item Calculation of sum of logarithms \cite{computing-log-sum}
+\item OpenCL optimization case study: Simple reductions \cite{amd-reductions}
+\item GMU cvičenia
+\end{itemize}
+
+%Zde vypište, které zdroje jste použili k tvorbě: hotový kód, hotová data
+%(obrázky, modely, $\ldots$), studijní materiály. Pokud vyplyne, že v projektu
+%je použit kód nebo data, která nejsou uvedena tady, jedná se o závažný problém
+%a projekt bude pravděpodobně hodnocen 0 body.
+
+%Rozsah: potřebný počet odrážek
+
+%---------------------------------------------------------------------------
+\section{Najdôležitejšie dosiahnuté výsledky}
+\begin{itemize}
+\item niekoľko násobné zrýchlenie Forward a Viterbi algoritmu
+\item zníženie časovej zložitosti algoritmov z $N^{2}*T$ na $log(N)*T$, kde $N$ je počet stavov HMM a $T$ je dĺžka reťazca pozorovania
+\end{itemize}
+
+\subsection{Zrýchlenie Forward algoritmu}
+
+Pri Forward algoritme sa nám podarilo dosiahnuť až takmer 150 násobné zrýchlenie oproti CPU implementácii. Je to výrazne viac ako v prípade Viterbiho algoritmu, kde sme dosiahli maximálne 70 násobné zrýchlenie. Dôvodom by mohlo byť potreba sčítavania logaritmických hodnôt pri Forward algoritme, čo je časovo náročnejšie než len hľadanie maxima a preto paralelizácia tejto časti tak výrazne zvýši zrýchlenie. Detailnejšie výsledky je možné vidieť na obrázku \ref{forward-elapsed-time}. V časoch nie je zahrnutá doba potrebná na kopírovanie dát s maticami pravdepodobností na grafickú kartu, pretože aj pri bežnom použití sa tieto dáta kopírujú len pred prvým spustením a potom nad rôznymi pozorovaniami spúšťame Forward algoritmus opakovane. Len pre predstavu, kopírovanie matíc pravedpodobností pre 8192 stavov, ktoré zaberajú 270\,MB, trvá 227\,ms. Takže aj v prípade kopírovania pred každým spustením by bolo zrýchlenie takmer 140 násobné oproti CPU.
+
+\begin{figure}[!ht]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      xbar,
+      width=.8\textwidth,
+      ylabel={Počet stavov},
+      yticklabels = {512,1024,2048,4096,8192},
+      ytick = {1,2,3,4,5},
+      ytick pos = left,
+      y dir = reverse,
+      enlarge y limits={true, abs value = 0.5},
+      y=1.1cm,
+    	xlabel={Doba behu [s]},
+      xtick pos = left,
+    	enlarge x limits={upper, value=0.2},
+      xmin=0,
+      nodes near coords,
+      reverse legend,
+      every node near coord/.append style={
+        /pgf/number format/fixed,
+        /pgf/number format/set thousands separator={\,},
+      },
+      ylabel style={
+        yshift = {1em},
+      },
+    ]
+    \addplot
+    	coordinates {(0.849,1) (4.2,2) (75.342,4) (18.621,3) (613.58,5)};
+    \addplot
+    	coordinates {(0.012,1) (0.0562,2) (0.145,3) (4.150,5) (0.465,4)};
+    \legend{CPU,GPU}
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Doba behu Forward algoritmu pre pozorovania o dĺžke 20} \label{forward-elapsed-time}
+\end{figure}
+
+\newpage
+
+\subsubsection{Zrýchlenie Viterbiho algoritmu}
+
+GPU implementácia Viterbiho algoritmu dosahuje takmer 70 násobné zrýchlenie oproti oproti CPU implementácii. Výsledky zrýchlenia pre rôzne počty stavov zobrazuje obrázok \ref{viterbi-elapsed-time}.
+
+\begin{figure}[!ht]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      xbar,
+      width=.8\textwidth,
+      ylabel={Počet stavov},
+      yticklabels = {512,1024,2048,4096,8192},
+      ytick = {1,2,3,4,5},
+      ytick pos = left,
+      y dir = reverse,
+      enlarge y limits={true, abs value = 0.5},
+      y=1.1cm,
+    	xlabel={Doba behu [s]},
+      xtick pos = left,
+    	enlarge x limits={upper, value=0.2},
+      xmin=0,
+      nodes near coords,
+      reverse legend,
+      every node near coord/.append style={
+        /pgf/number format/fixed,
+        /pgf/number format/set thousands separator={\,},
+      },
+      ylabel style={
+        yshift = {1em},
+      }
+    ]
+    \addplot
+    	coordinates {(0.273,1) (2.165,2) (9.498,3) (38.615,4) (271.53,5)};
+    \addplot
+    	coordinates {(0.057,1) (0.028,2) (0.0843,3) (0.3363,4) (3.931,5) };
+    \legend{CPU,GPU}
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Doba behu Viterbiho algoritmu pre pozorovania o dĺžke 20} \label{viterbi-elapsed-time}
+\end{figure}
+
+
+
+% NAJLEPŠIE PRIDAŤ GRAFY
+%Popište 3 věci, které jsou na vašem projektu nejlepší. Nejlépe %ukažte a
+%komentujte obrázky, v nejhorším případě vypište textově.
+
+%---------------------------------------------------------------------------
+
+\section{Ovládanie vytvoreného programu}
+
+Preklad aplikácie zabezpečuje nástroj CMake. Aplikácia sa spúšťa v príkazovom
+riadku:
+
+\begin{verbatim}
+./hmm -s num_of_states -o num_of_outputs [-p platform] [-d device]
+      [-l obs_length] [-O num_of_observations]
+\end{verbatim}
+
+\noindent kde jednotlivé parametre majú nasledovný význam:
+
+\begin{description}
+  \item[\texttt{-s}] počet stavov HMM,
+  \item[\texttt{-o}] počet výstupov, ktoré HMM emituje,
+  \item[\texttt{-p}] číslo OpenCL platformy, ktorá sa má použiť (z výpisu, programu), defaultne sa zvolí prvá dostupná,
+  \item[\texttt{-d}] číslo OpenCL zariadenia, ktoré má byť použité (z výpisu programu), defaultne sa zvolí prvé dostupné,
+  \item[\texttt{-l}] dĺžka jedného pozorovania, ktoré sa vyhodnocuje, defaultná hodnota je 30 symbolov,
+  \item[\texttt{-O}] počet pozorovaní, defaultná hodnota je jedno pozorovanie.
+\end{description}
+
+\noindent Po spustení aplikácie s príslušnými parametrami dôjde k vytvoreniu HMM modelu s
+definovaným počtom stavov a výstupov a jeho prechodové a emitujúce pravdepodobnosti sú náhodne inicalizované. Zároveň sa náhodne vygeneruje
+požadovaný počet pozorovaní a nad daným modelom a pozorovaniami sa spustia jednotlivé algoritmy (na GPU aj CPU). Po skončení výpočtu príslušného algoritmu je vypísaná doba evaulácie daného algoritmu vrátane trvania jednotlivých fáz,
+ktoré sú pre daný algoritmus typické.
+
+%Stručně popište, jak se program ovládá (nejlépe odrážky rozdělené do
+%kategorií). Pokud se ovládání odchyluje od zkratek a způsobů obvykle
+%používaných v okýnkových nadstavbách operačních systémů, zdůvodněte, proč se
+%tak děje.
+
+%Rozsah: potřebný počet odrážek
+
+%---------------------------------------------------------------------------
+\section{Zvláštne použité znalosti}
+%Uveďte informace, které byly potřeba nad rámec výuky probírané na %FIT.
+%Vysvětlete je pomocí obrázků, schémat, vzorců apod.
+
+\subsection{Skrytý Markov model}
+
+Skrytý Markovov model (Hidden Markov Model - HMM) je štatistický Markov model,
+ktorý modeluje systém za predpokladu, že ide o Markovov proces so skrytými
+(nepozorovanými) stavmi.
+
+Jednoduchý prípad Markovho modelu je Markovov reťazec, kde je stav systému viditeľný pozorovateľovi, takže pravdepodobnosť zmeny stavu je jediný parameter modelu. Naopak v skrytom Markovovom modeli nie je stav pozorovateľovi viditeľný,
+ale len výstup, ktorý je na stave závislý. Každý stav má pravdepodobnostný vplyv na výstup systému. \cite{hmm-wiki}
+
+Formálne je potom HMM definovaný nasledovnými komponentami \cite{jurafsky_martin}:
+\begin{description}[leftmargin=!,labelwidth=12em]
+  \item[$Q = q_1 q_2 \dots q_N$] konečná množina $N$ stavov,
+  \item[$A = a_{1,1} a_{1,2} \dots a_{n,1} \dots a_{n,n}$] matica prechodových pravdepodobností $A$, kde $a_{i,j}$ reprezentuje pravdepodobnosť prechodu zo stavu $i$ do stavu $j$,
+  \item[$O = o_1 o_2 \dots o_T$] postupnosť tvorená $T$ pozorovaniami, kde každé pozorovanie je nejaký symbol z abecedy $V = v_1, v_2, \dots, v_V$,
+  \item[$B = b_i(o_t)$] postupnosť emitujúcich pravdepodobností, ktorá vyjadruje pravdepodobnosť vygenerovania pozorovania $o_t$ zo stavu $i$,
+  \item[$\pi = \pi_1, \pi_2, \dots, \pi_N$]  počiatočné rozloženie prechodových pravdepodobností, kde $\pi_i$ je pravdepodobnosť, že Markovov reťazec začne v stave $i$,
+  \item[$Q_A = \{q_x, q_y, \dots \}$] množina $Q_A \subseteq Q$ akceptujúcich stavov.
+\end{description}
+
+\bigskip
+
+\noindent Pri práci s HMM potrebujemem riešiť 3 základné problémy \cite{rabiner}:
+\begin{enumerate}
+  \item K danému HMM $\lambda = (A, B)$ a postupnosti pozorovaní $O$ určiť pravdepodobnosť $P(O|\lambda))$.
+  \item K danému HMM $\lambda = (A, B)$ a postupnosti pozorovaní $O$ nájsť najlepšiu postupnosť skrytých stavov $Q$.
+  \item K danej postupnosti pozorovaní $O$ a množine stavov $Q$ HMM modelu určiť parametre $A$ a $B$.
+\end{enumerate}
+
+\noindent V rámci našej práce sa budeme zaoberať riešením a paralelizáciou prvých dvoch problémov, preto ich v následujúcich podkapitolách bližšie priblížime.
+
+\subsection{Forward algoritmus}
+
+Úlohou Forward algoritmu je určiť pravdepodobnosť výskytu konkrétnej postupnosti pozorovaní. Algoritmus výpočtu popisuje následujúci pseudokód:
+
+\begin{algorithm}[!h]
+  \floatname{algorithm}{Algoritmus}
+  \caption{Forward algoritmus \cite{jurafsky_martin}} \label{alg-forward}
+  \begin{algorithmic}[1]
+    \renewcommand{\algorithmicrequire}{\textbf{Vstupy:}}
+    \renewcommand{\algorithmicensure}{\textbf{Výstup:}}
+
+    \Require probability matrix $A$, emission matrix $B$, observation $O$ of len $T$
+    \Ensure $\V{likelihood}$
+
+    \State create a probability matrix $\alpha[N, T]$
+    \For{each state $s$ \textbf{from} $1$ \textbf{to} $N$} \Comment{Inicializačný krok}
+      \State $\alpha[s,1] \gets \pi_{s} * b_s(o_1)$
+    \EndFor
+    \Statex
+    \For{each time step $t$ \textbf{from} $2$ \textbf{to} $T$} \Comment{Rekurzívny krok}
+      \For{each state $s$ \textbf{from} $1$ \textbf{to} $N$}
+        \State $\alpha[s,t] \gets \sum_{s' = 1}^{N} \alpha[s', t - 1] * a_{s', s} * b_s(o_t)$
+      \EndFor
+    \EndFor
+    \Statex
+    \State $\V{likelihood} \gets \sum_{s = 1}^{N} \alpha[s,T]$ \Comment{Ukončovací krok}
+  \end{algorithmic}
+\end{algorithm}
+
+Zložitosť tohto algoritmu je pri sekvenčnom vykonávaní $\mathcal{O}(N^2 \cdot T)$. V ideálnom prípade by sme s využitím paralelnej redukcie boli schopný dosiahnuť časovú zložitosť na úrovni  $\mathcal{O}(\log(N) \cdot T)$. To je však limitované počtom paralelných vlákien a pre veľký počet stavov nie sme schopný také zrýchlenie nikdy dosiahnuť. \cite{cuda-reductions}
+
+Ďalšie urýchlenie výpočtu môžeme dosiahnuť počítaním s logaritmickými hodnotami pravdepodobností, vďaka čomu môžeme namiesto násobenia sčítať, čo je výrazne jednoduchšia operácia. Zároveň to rieši aj problém podtečenia, ktorý by sa musel riešiť normalizáciou výpočítaných hodnôt v každom kroku.
+
+\newpage
+
+\subsection{Viterbiho algoritmus}
+
+Viterbiho algoritmus pre zadanú sekvenciu pozorovaní $O = o_1 o_2 \dots o_T$ hľadá najpravdepodobnejšiu sekvenciu stavov $Q = q_1 q_2\dots q_T$.
+
+\begin{algorithm}[!h]
+  \floatname{algorithm}{Algoritmus}
+  \caption{Viterbiho algoritmus \cite{jurafsky_martin}} \label{alg-viterbi}
+  \begin{algorithmic}[1]
+    \renewcommand{\algorithmicrequire}{\textbf{Vstupy:}}
+    \renewcommand{\algorithmicensure}{\textbf{Výstup:}}
+
+    \Require probability matrix $A$, emission matrix $B$, observation $O$ of len $T$
+    \Ensure viterbi path $\V{path}$
+
+    \State create a path probability matrix $\V{v}[N, T]$
+    \State create a backpointer matrix $\V{bt}[N, T]$
+
+    \For{each state $s$ \textbf{from} $1$ \textbf{to} $N$} \Comment{Inicializačný krok}
+      \State $\V{v}[s,1] \gets \pi_{s} * b_s(o_1)$
+      \State $\V{bt}[s,1] \gets 0$
+    \EndFor
+    \Statex
+    \For{each time step $t$ \textbf{from} $2$ \textbf{to} $T$} \Comment{Rekurzívny krok}
+      \For{each state $s$ \textbf{from} $1$ \textbf{to} $N$}
+        \State $\V{v}[s,t] \gets \max_{s' = 1}^{N} \alpha[s', t - 1] * a_{s', s} * b_s(o_t)$
+        \State $\V{bt}[s,t] \gets \argmax_{s' = 1}^{N} \V{v}[s',t-1] * a_{s',s}$
+      \EndFor
+    \EndFor
+    \Statex
+    \State $\V{lastState} \gets \argmax_{s = 1}^{N} \V{v}[s,T]$ \Comment{Ukončovací krok}
+    \State $\V{path} \gets$ the backtrace path by following backpointers $\V{bt}$ \Comment{Backtracing}
+    \State \hskip\algorithmicindent to states back in time from $\V{lastState}$
+  \end{algorithmic}
+\end{algorithm}
+
+\noindent Zložitosť je rovnaká ako v prípade Forward algoritmu a teda $\mathcal{O}(N^2 T)$.
+
+%Rozsah: podle potřeby
+
+%---------------------------------------------------------------------------
+\section{Rozdelenie práce v tíme}
+
+\begin{itemize}
+\item Peter Gazdík: OpenCL réžia, CPU a GPU implementácia Viterbiho algoritmu, merania,
+\item Michal Klčo: Forward algoritmus CPU a GPU, ladenie programu.
+\end{itemize}
+
+%Pokud to bude vhodné, použijte odrážky místo souvislých vět.
+
+%Rozsah: co nejstručnější tak, aby bylo zřejmé, jak byla dělena práce a za co v
+%projektu je kdo zodpovědný.
+
+%---------------------------------------------------------------------------
+\section{Čo bolo najpracnejšie}
+
+Jedna z najťažších vecí na projekte bol návrh implementácie algoritmov tak, aby implementácie na GPU boli čo najrýchlejšie. To zahŕňalo redukciu časovej zložitosti a zlepšenie pamäťovej lokality. Veľa času sme tiež strávili odľadovaním chýb spojených s nepozornosťou pri voľaniach OpenCL API, ktoré vznikali aj napriek pomerne dôkladnej kontrole návratových hodnôt.
+%Popište, co vám při řešení nejvíce komplikovalo život, s čím jste se museli
+%potýkat, co zabralo čas.
+
+%Rozsah: 5-10 řádků
+
+%---------------------------------------------------------------------------
+\section{Zkúsenosti získané riešením projektu}
+
+Riešením projektu sme sa naučili, akým spôsobom HMM fungujú, ako sa počítajú parametre modelu a ďalšie s ním spojené hodnoty potrebné pre klasifikáciu. Naučili sme sa pracovať s OpenCL a implementovať algoritmy na GPU. Vyskúšali sme si tiež dekompozíciu zložitého problému a rozdelenie podúloh medzi jednotlivých členov týmu.
+%^Popište, co jste se řešením projektu naučili. Zahrňte dovednosti obecně
+%programátorské, věci z oblasti počítačové grafiky, ale i spolupráci v týmu,
+%hospodaření s časem, atd.
+
+%Rozsah: formulujte stručně, uchopte cca 3-5 věcí
+
+%---------------------------------------------------------------------------
+\section{Autoevaluácia}
+
+%Ohodnoťte vaše řešení v jednotlivých kategoriích (0 – nic neuděláno,
+%zoufalství, 100\% – dokonalost sama). Projekt, který ve finále obdrží plný
+%počet bodů, může mít složky hodnocené i hodně nízko. Uvedení hodnot blízkých
+%100\% ve všech nebo mnoha kategoriích může ukazovat na nepochopení problematiky
+%nebo na snahu kamuflovat slabé stránky projektu. Bodově hodnocena bude i
+%schopnost vnímat silné a slabé stránky svého řešení.
+
+\paragraph{Technický návrh (80\%):}
+% (analýza, dekompozice problému, volba
+% vhodných prostředků, $\ldots$)
+%Stručně (1-2 řádky) komentujte hodnocení.
+Pri implementácii algoritmov sme sa držali striktne ich matematického popisu. Takto definované algoritmy sme najskôr implementovali na CPU a identifikovali sme časovo najkritickejšie časti, ktoré sme následne paralelizovali na GPU.
+
+\paragraph{Programovanie (70\%):}
+%(kvalita a čitelnost kódu, spolehlivost běhu,
+%obecnost řešení, znovupoužitelnost, $\ldots$)
+%Stručně (1-2 řádky) komentujte hodnocení.
+
+\begin{itemize}
+  \item Použitie OOP kvôli prehľadnosti a oddeleniu volaní OpenCL API od zvyšku aplikácie. Zapúzdrenie HMM a jednotlivých algoritmov, ktoré s ním pracujú.
+  \item Využitie C++11 a moderných konštrukcií. (šablóny, \dots)
+  \item Snaha o intuitívne názvy identifikátorov.
+\end{itemize}
+
+\paragraph{Vzhľad vytvoreného riešenia(30\%):}
+%(uvěřitelnost zobrazení,
+%estetická kvalita, vhled GUI, $\ldots$)
+%Stručně (1-2 řádky) komentujte hodnocení.
+
+Aplikácia je programovaná ako jednoduchý CLI program.
+
+\paragraph{Využitie zdrojov (85\%):}
+
+Pre vytvorenie programu bola využité kvalitne spracované zdroje popisujúce téoriu problematiky a existujúca implementácia poslúžila ako ukážka možného riešenia.
+%(využití existujícího kódu a dat, využití
+%literatury, $\ldots$)
+%Stručně (1-2 řádky) komentujte hodnocení.
+
+\paragraph{Hospodárenie s časom (50\%):}
+
+Projekt sme nevypracovávali na poslednú chvíľu, ale pracovali sme na ňom priebežne počas semestra. Napriek tomu sme neimplementovali Baum-Welchov algoritmus, ktorý nie je dobre paralelizovateľný, čo dokazujú aj výsledky
+iných prác.
+% TODO citácia
+
+%(rovnoměrné dotažení částí projektu,
+%míra spěchu, chybějící části řešení, $\ldots$)
+%Stručně (1-2 řádky) komentujte hodnocení.
+
+\paragraph{Spolupráca v tíme (90\%):}
+
+Každý člen týmu vypracoval to, čo po mu bolo po dohode pridelené. Komunikácia, zdieľanie zdrojov a priebežná kontrola členov bola podporená využívaním nástrojov ako git, Trello a pod.
+
+%(komunikace, dodržování dohod, vzájemné
+%polehnutí, rovnoměrnost, $\ldots$)
+%Stručně (1-2 řádky) komentujte hodnocení.
+
+\paragraph{Celkový dojem (85\%):}
+
+Obťiažnosť projektu bola pre nás primeraná. Vďaka tomu, že nám bolo umožnené pracovať na nami zvolenej téme, bola práca pre náš tým zaujímavejšia. Za veľký prínos považujeme oboznámenie sa s OpenCL knižnicou a s paralelizáciou výpočtu. Ďalšou výhodou bolo, že sme si pripomenuli a prehĺbili teóriu HMM.
+
+%(pracnost, získané dovednosti, užitečnost,
+%volba zadání, cokoliv, $\ldots$)
+%Stručně (5-10 řádků) komentujte hodnocení.
+
+%---------------------------------------------------------------------------
+\section{Doporučenie pre budúce zadávanie projektov}
+
+Možnosť zvoliť si vlastnú tému a konzultovať zadanie bolo pre nás dôležitým spestrením projektu, pretože sme mali možnosť venovať sa veciam, ktoré nás viacej zaujímajú. Na organizácii by sme nič nemenili.
+
+%Co vám vyhovovalo a co nevyhovovalo na organizaci projektů? Které prvky by měly
+%být zachovány, zesíleny, potlačeny, eliminovány?
+
+%---------------------------------------------------------------------------
+% \section{Různé}
+
+%Ještě něco by v dokumentaci mělo být? Napište to sem! Podle potřeby i založte
+%novou kapitolu.
+
+\bibliographystyle{plain}
+
+\bibliography{reference}
+% \addcontentsline{toc}{chapter}{Literatura}
+
+\end{document}
+% vim:set ft=tex expandtab enc=utf8:
