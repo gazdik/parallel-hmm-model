@@ -52,6 +52,8 @@ fabric.properties
 # LaTeX Documentation
 doc/*.aux
 doc/*.log
-doc/gmu.pdf
+doc/doc.pdf
 doc/*.out
+doc/*.bbl
+doc/*.blg
 
