@@ -1,0 +1,98 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Author: Peter Gazdík, Michal Klčo
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[10pt]{beamer}
+
+\usetheme{metropolis}
+\usepackage{appendixnumberbeamer}
+
+
+\usepackage[slovak]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{colortbl}
+\usepackage{pgfpages}
+\usepackage{float}
+
+\newcommand{\backupbegin}{
+   \newcounter{framenumberappendix}
+   \setcounter{framenumberappendix}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \addtocounter{framenumberappendix}{-\value{framenumber}}
+   \addtocounter{framenumber}{\value{framenumberappendix}}
+}
+
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{multirow}
+\usepackage{array}
+\newcolumntype{x}[1]{>{\centering\arraybackslash\hspace{0pt}}p{#1}}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{patchplots}
+\usepackage{package/kbordermatrix}
+
+% \usepackage[table,xcdraw]{xcolor}
+\usepackage{xcolor}
+
+\usepgfplotslibrary{dateplot}
+\newcommand{\V}[1]{\mathit{#1}}
+
+\def\VR{\kern-\arraycolsep\strut\vrule &\kern-\arraycolsep}
+\def\vr{\kern-\arraycolsep & \kern-\arraycolsep}
+
+\usepackage{xspace}
+
+\title{Hidden Markov Models}
+\author{Peter Gazdík, Michal Klčo}
+\date{\today}
+% \institute{\hfill\includegraphics[height=1cm]{fig/fit_cmyk}}
+%\titlegraphic{\hfill\includegraphics[height=1.5cm]{fig/fit_cmyk}}
+
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}[frame number]
+% \setbeamertemplate{note page}[plain]
+% \setbeameroption{show notes on second screen=right}
+
+\begin{document}
+
+{%
+  % \setbeamertemplate{headline}{}
+  % \setbeamertemplate{note page}[plain]
+  % \setbeamertemplate{navigation symbols}[horizontal]
+  % \frame{\titlepage}
+}
+
+%-------------------------------------------------------------------------------
+%                                   Title Page
+%-------------------------------------------------------------------------------
+
+\maketitle
+
+%-------------------------------------------------------------------------------
+%                                   Obsah
+%-------------------------------------------------------------------------------
+
+% \begin{frame}
+%   \frametitle{Layout}
+%   \tableofcontents[currentsection, currentsubsection]
+% \end{frame}
+
+\begin{frame}{Zadanie}
+
+  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+\end{frame}
+
+\begin{frame}{Hidden Markov Model}
+
+  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+\end{frame}
+
+\end{document}
